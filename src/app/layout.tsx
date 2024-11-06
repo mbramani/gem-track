@@ -3,8 +3,12 @@ import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 import { TRPCProvider } from '@/trpc/client';
+import { Toaster } from '@/components/ui/toaster';
 
-const roboto = Roboto({ weight: ['100', '300', '400', '500', '700', '900'] });
+const roboto = Roboto({
+    weight: ['100', '300', '400', '500', '700', '900'],
+    subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -19,6 +23,8 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${roboto.className} antialiased`}>
+                {' '}
+                <Toaster />
                 <TRPCProvider>{children}</TRPCProvider>
             </body>
         </html>
