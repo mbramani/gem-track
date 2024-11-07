@@ -24,6 +24,22 @@ model User {
   email     String   @unique @db.VarChar(256)
   password  String   @db.VarChar(60)
   role      UserRole @default(USER)
+  gstInNo   String   @db.VarChar(15)
+  addressId String   @unique
+  address   Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Address {
+  id           String   @id @default(uuid())
+  addressLine1 String   @db.Text
+  addressLine2 String?  @db.Text
+  city         String   @db.VarChar(255)
+  state        String   @db.VarChar(255)
+  country      String   @db.VarChar(255)
+  postalCode   String   @db.VarChar(6)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  User         User?
 }

@@ -3,6 +3,7 @@ import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 import { TRPCProvider } from '@/trpc/client';
+import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 
 const roboto = Roboto({
@@ -23,9 +24,18 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${roboto.className} antialiased`}>
-                {' '}
-                <Toaster />
-                <TRPCProvider>{children}</TRPCProvider>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <TRPCProvider>
+                        {' '}
+                        <Toaster />
+                        {children}
+                    </TRPCProvider>
+                </ThemeProvider>
             </body>
         </html>
     );
