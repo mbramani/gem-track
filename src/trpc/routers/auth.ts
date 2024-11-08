@@ -3,7 +3,7 @@ import { createTRPCRouter, publicProcedure } from '../init';
 
 import { TRPCError } from '@trpc/server';
 import { cookies } from 'next/headers';
-import { loginSchema } from '@/schemas/login-schema';
+import { loginSchema } from '@/schemas';
 
 export const authRouter = createTRPCRouter({
     login: publicProcedure

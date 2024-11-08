@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
-import { loginSchema } from '@/schemas/login-schema';
+import { loginSchema } from '@/schemas';
 import { toast } from '@/hooks/use-toast';
 import { trpc } from '@/trpc/client';
 import { useForm } from 'react-hook-form';
@@ -31,7 +31,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 type AuthFormValues = z.infer<typeof loginSchema>;
 
-export default function AuthForm() {
+export function AuthForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -49,7 +49,7 @@ export default function AuthForm() {
         },
     });
 
-    const form = useForm<AuthFormValues>({
+    const authForm = useForm<AuthFormValues>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: '',
@@ -57,9 +57,9 @@ export default function AuthForm() {
         },
     });
 
-    const onSubmit = (data: AuthFormValues) => {
+    function onAuthFormSubmit(data: AuthFormValues) {
         loginMutation.mutate(data);
-    };
+    }
 
     return (
         <Card>
@@ -70,13 +70,13 @@ export default function AuthForm() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <Form {...form}>
+                <Form {...authForm}>
                     <form
-                        onSubmit={form.handleSubmit(onSubmit)}
+                        onSubmit={authForm.handleSubmit(onAuthFormSubmit)}
                         className="space-y-4"
                     >
                         <FormField
-                            control={form.control}
+                            control={authForm.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
@@ -94,7 +94,7 @@ export default function AuthForm() {
                             )}
                         />
                         <FormField
-                            control={form.control}
+                            control={authForm.control}
                             name="password"
                             render={({ field }) => (
                                 <FormItem>

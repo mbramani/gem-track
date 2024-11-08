@@ -1,5 +1,5 @@
-import AuthForm from '@/components/forms/auth-form';
-import { AuthFormSkeleton } from '@/components/skeletons/auth-form';
+import { AuthForm } from '@/components/forms/auth-form';
+import { AuthFormSkeleton } from '@/components/skeletons/forms';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 

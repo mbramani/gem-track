@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
     BarChart,
     Briefcase,
@@ -21,6 +21,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { FC, useEffect, useState } from 'react';
 import {
     Sidebar,
     SidebarContent,
@@ -30,13 +31,19 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
+import { trpc } from '@/trpc/client';
 import { useTheme } from 'next-themes';
 
-const navigationItems = [
+interface NavigationItem {
+    name: string;
+    icon: FC<{ className?: string }>;
+    href: string;
+}
+
+const navigationItems: NavigationItem[] = [
     { name: 'Client', icon: User, href: '/dashboard/client' },
     {
         name: 'Diamond Packet',
@@ -51,8 +58,8 @@ const navigationItems = [
 export function AppSidebar() {
     const router = useRouter();
     const pathname = usePathname();
-    const [activePage, setActivePage] = useState('');
-    const { theme, setTheme } = useTheme();
+    const [activePage, setActivePage] = useState<string>('');
+    const [{ profile }] = trpc.user.getProfile.useSuspenseQuery();
 
     useEffect(() => {
         const currentItem = navigationItems.find((item) =>
@@ -63,7 +70,7 @@ export function AppSidebar() {
         }
     }, [pathname]);
 
-    function handleSidebarMenuButtonClick(item: (typeof navigationItems)[0]) {
+    function handleSidebarMenuButtonClick(item: NavigationItem) {
         setActivePage(item.name);
         router.push(item.href);
     }
@@ -78,10 +85,6 @@ export function AppSidebar() {
                             onClick={() => router.push('/dashboard')}
                         >
                             <Avatar className="h-8 w-8">
-                                <AvatarImage
-                                    src="/placeholder.svg?height=32&width=32"
-                                    alt="Gem Track"
-                                />
                                 <AvatarFallback>GT</AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -124,85 +127,95 @@ export function AppSidebar() {
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <SidebarMenuButton>
-                                    {theme === 'light' ? (
-                                        <Sun className="h-4 w-4" />
-                                    ) : theme === 'dark' ? (
-                                        <Moon className="h-4 w-4" />
-                                    ) : (
-                                        <Sun className="h-4 w-4" />
-                                    )}
-                                    <span className="ml-1">Theme</span>
-                                    <span className="sr-only">
-                                        Toggle theme
-                                    </span>
-                                </SidebarMenuButton>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start">
-                                <DropdownMenuItem
-                                    onClick={() => setTheme('light')}
-                                >
-                                    Light
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => setTheme('dark')}
-                                >
-                                    Dark
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => setTheme('system')}
-                                >
-                                    System
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <ThemeToggle />
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <SidebarMenuButton size="lg">
-                                    <Avatar className="h-8 w-8">
-                                        <AvatarImage
-                                            src="/placeholder.svg?height=32&width=32"
-                                            alt="User"
-                                        />
-                                        <AvatarFallback>U</AvatarFallback>
-                                    </Avatar>
-                                    <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="font-semibold">
-                                            John Doe
-                                        </span>
-                                        <span className="text-xs text-muted-foreground">
-                                            john@example.com
-                                        </span>
-                                    </div>
-                                    <ChevronsUpDown className="ml-auto h-4 w-4" />
-                                </SidebarMenuButton>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="w-56">
-                                <DropdownMenuLabel>
-                                    My Account
-                                </DropdownMenuLabel>
-                                <DropdownMenuItem>
-                                    <User className="mr-2 h-4 w-4" />
-                                    <span>Profile</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Settings className="mr-2 h-4 w-4" />
-                                    <span>Settings</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <LogOut className="mr-2 h-4 w-4" />
-                                    <span>Log out</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <UserMenu user={profile} />
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
         </Sidebar>
+    );
+}
+
+function ThemeToggle() {
+    const { theme, setTheme } = useTheme();
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <SidebarMenuButton>
+                    {theme === 'light' ? (
+                        <Sun className="h-4 w-4" />
+                    ) : theme === 'dark' ? (
+                        <Moon className="h-4 w-4" />
+                    ) : (
+                        <Sun className="h-4 w-4" />
+                    )}
+                    <span className="ml-1">Theme</span>
+                    <span className="sr-only">Toggle theme</span>
+                </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+                <DropdownMenuItem onClick={() => setTheme('light')}>
+                    Light
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('dark')}>
+                    Dark
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('system')}>
+                    System
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}
+
+function UserMenu({ user }: { user: { name: string; email: string } }) {
+    const router = useRouter();
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <SidebarMenuButton size="lg">
+                    <Avatar className="h-8 w-8">
+                        <AvatarFallback>
+                            {user.name.at(0)?.toUpperCase()}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                        <span className="font-semibold">{user.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                            {user.email}
+                        </span>
+                    </div>
+                    <ChevronsUpDown className="ml-auto h-4 w-4" />
+                </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuItem
+                    onClick={() => router.push('/dashboard/profile')}
+                    className="cursor-pointer"
+                >
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => router.push('/dashboard/settings')}
+                    className="cursor-pointer"
+                >
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                    onClick={() => router.push('/login')}
+                    className="cursor-pointer"
+                >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }
