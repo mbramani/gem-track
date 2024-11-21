@@ -1,6 +1,7 @@
-import { ZodTypeAny, z } from 'zod';
+import { z } from 'zod';
 
 const GST_IN_REGEX = /^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/;
+const PAN_NO_REGEX = /^[A-Z]{5}\d{4}[A-Z]$/;
 
 export const idSchema = z.object({
     id: z.string().uuid({ message: 'Invalid UUID format' }),
@@ -82,6 +83,19 @@ export const clientSchema = profileSchema.merge(
         }),
     })
 );
+
+export const employeeSchema = profileSchema
+    .pick({ name: true, email: true, phoneNo: true })
+    .merge(
+        z.object({
+            employeeId: z.string().min(1, 'Employee Id is required').max(255, {
+                message: 'Employee Id must be 255 or fewer characters long',
+            }),
+            panNo: z
+                .string()
+                .regex(PAN_NO_REGEX, { message: 'Invalid Pan number' }),
+        })
+    );
 
 export const paginationSchema = z.object({
     page: z

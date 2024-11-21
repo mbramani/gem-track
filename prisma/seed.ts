@@ -18,7 +18,22 @@ function generateGSTIN() {
         .toString()
         .padStart(2, '0');
 
-    const pan = [
+    const pan = generatePanNo();
+
+    const entityNumber = digits[Math.floor(Math.random() * digits.length)];
+
+    const fixedZ = 'Z';
+
+    const checksum = chars[Math.floor(Math.random() * chars.length)];
+
+    return `${stateCode}${pan}${entityNumber}${fixedZ}${checksum}`;
+}
+
+function generatePanNo() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const digits = '0123456789';
+
+    const panNo = [
         Array(5)
             .fill(null)
             .map(() => chars[Math.floor(Math.random() * chars.length)])
@@ -30,13 +45,7 @@ function generateGSTIN() {
         chars[Math.floor(Math.random() * chars.length)],
     ].join('');
 
-    const entityNumber = digits[Math.floor(Math.random() * digits.length)];
-
-    const fixedZ = 'Z';
-
-    const checksum = chars[Math.floor(Math.random() * chars.length)];
-
-    return `${stateCode}${pan}${entityNumber}${fixedZ}${checksum}`;
+    return panNo;
 }
 
 function generateAddress() {
@@ -97,7 +106,7 @@ async function seed() {
 
                 return await prisma.client.create({
                     data: {
-                        clientId: `2024${(i + 1).toString().padStart(2, '0')}`,
+                        clientId: `2024C${(i + 1).toString().padStart(2, '0')}`,
                         name: `Client ${i + 1}`,
                         email: `client${i + 1}@example.com`,
                         phoneNo: generatePhoneNumber(),
@@ -109,10 +118,32 @@ async function seed() {
             })
         );
 
+        // Create 15 test employees with addresses
+        const employees = await Promise.all(
+            Array.from({ length: 15 }, async (_, i) => {
+                const employeesAddress = await prisma.address.create({
+                    data: generateAddress(),
+                });
+
+                return await prisma.employee.create({
+                    data: {
+                        employeeId: `2024E${(i + 1).toString().padStart(2, '0')}`,
+                        name: `Employee ${i + 1}`,
+                        email: `employee${i + 1}@example.com`,
+                        phoneNo: generatePhoneNumber(),
+                        panNo: generatePanNo(),
+                        userId: user.id,
+                        addressId: employeesAddress.id,
+                    },
+                });
+            })
+        );
+
         console.log(`🌟 Seeding completed successfully!`);
         console.log(`👤 User: ${user.email}`);
         console.log(`🔑 Password: Test@1234`);
         console.log(`👥 Number of clients created: ${clients.length}`);
+        console.log(`👷 Number of employees created: ${employees.length}`);
     } catch (error) {
         console.error('Error seeding database:', error);
         process.exit(1);
