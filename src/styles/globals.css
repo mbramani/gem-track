@@ -83,3 +83,28 @@
         @apply bg-background text-foreground;
     }
 }
+
+::-webkit-scrollbar {
+    width: 0.4rem;
+    height: 0.4rem;
+}
+
+::-webkit-scrollbar-track {
+    background: hsl(var(--background) / 0.7);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.5);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--foreground));
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.5)
+        hsl(var(--background) / 0.7);
+}

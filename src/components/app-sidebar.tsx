@@ -44,15 +44,15 @@ interface NavigationItem {
 }
 
 const navigationItems: NavigationItem[] = [
-    { name: 'Client', icon: User, href: '/dashboard/client' },
+    { name: 'Clients', icon: User, href: '/dashboard/clients' },
     {
-        name: 'Diamond Packet',
+        name: 'Diamond Packets',
         icon: Package,
-        href: '/dashboard/diamond-packet',
+        href: '/dashboard/diamond-packets',
     },
-    { name: 'Process', icon: Settings, href: '/dashboard/process' },
-    { name: 'Employee', icon: Briefcase, href: '/dashboard/employee' },
-    { name: 'Report', icon: BarChart, href: '/dashboard/report' },
+    { name: 'Processes', icon: Settings, href: '/dashboard/processes' },
+    { name: 'Employees', icon: Briefcase, href: '/dashboard/employees' },
+    { name: 'Reports', icon: BarChart, href: '/dashboard/reports' },
 ];
 
 export function AppSidebar() {

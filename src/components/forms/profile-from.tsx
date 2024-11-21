@@ -46,7 +46,7 @@ export function ProfileForm() {
         defaultValues: {
             name: profile.name,
             email: profile.email,
-            phoneNumber: profile.phoneNumber,
+            phoneNo: profile.phoneNo,
             gstInNo: profile.gstInNo,
         },
     });
@@ -94,7 +94,7 @@ export function ProfileForm() {
                 />
                 <FormField
                     control={profileForm.control}
-                    name="phoneNumber"
+                    name="phoneNo"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Phone Number</FormLabel>

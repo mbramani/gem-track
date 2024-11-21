@@ -1,5 +1,6 @@
 import { TRPCError, initTRPC } from '@trpc/server';
 
+import { ZodError } from 'zod';
 import { cache } from 'react';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
@@ -22,6 +23,11 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
                     : shape.message,
             data: {
                 ...shape.data,
+                zodError:
+                    error.code === 'BAD_REQUEST' &&
+                    error.cause instanceof ZodError
+                        ? error.cause.flatten()
+                        : null,
             },
         };
     },

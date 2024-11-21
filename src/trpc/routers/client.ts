@@ -121,7 +121,6 @@ export const clientRouter = createTRPCRouter({
 
             const total = await ctx.db.client.count({ where });
 
-            console.log(Math.ceil(total / limit));
             return {
                 clients,
                 pages: Math.ceil(total / limit),

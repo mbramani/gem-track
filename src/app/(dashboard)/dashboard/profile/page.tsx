@@ -9,8 +9,6 @@ import { Suspense } from 'react';
 import { TabWrapper } from '@/components/tab-wrapper';
 import { trpc } from '@/trpc/server';
 
-export const dynamic = 'force-dynamic';
-
 export default async function ProfilePage() {
     const { profile } = await trpc.user.getProfile();
     return (

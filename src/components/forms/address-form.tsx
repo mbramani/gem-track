@@ -34,11 +34,10 @@ export function AddressForm({ addressId }: { addressId: string }) {
                 variant: 'destructive',
             });
         },
-        onSuccess() {
+        onSuccess(data) {
             toast({
                 title: 'Address updated',
-                description:
-                    'Address information has been updated successfully.',
+                description: data.message,
             });
         },
     });
