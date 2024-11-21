@@ -9,7 +9,7 @@
 -- AlterTable
 ALTER TABLE "User" 
 ADD COLUMN     "addressId" TEXT NOT NULL,
-ADD COLUMN "phoneNumber" VARCHAR(15) NOT NULL,
+ADD COLUMN "phoneNo" VARCHAR(15) NOT NULL,
 ADD COLUMN     "gstInNo" VARCHAR(15) NOT NULL;
 
 -- CreateTable

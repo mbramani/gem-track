@@ -1,9 +1,20 @@
-import { z } from 'zod';
+import { ZodTypeAny, z } from 'zod';
 
 const GST_IN_REGEX = /^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/;
 
 export const idSchema = z.object({
     id: z.string().uuid({ message: 'Invalid UUID format' }),
+});
+
+export const timeStampSchema = z.object({
+    createdAt: z.date({
+        required_error: 'Created date is required',
+        invalid_type_error: 'Created date must be a valid date',
+    }),
+    updatedAt: z.date({
+        required_error: 'Updated date is required',
+        invalid_type_error: 'Updated date must be a valid date',
+    }),
 });
 
 export const userSchema = z.object({
@@ -19,7 +30,7 @@ export const userSchema = z.object({
         .string()
         .min(8, { message: 'Password must be at least 8 characters long' })
         .max(12, { message: 'Password must be 12 or fewer characters long' }),
-    phoneNumber: z
+    phoneNo: z
         .string()
         .min(10, {
             message: 'Phone number must be at least 10 characters long',
@@ -63,3 +74,61 @@ export const addressSchema = z.object({
         message: 'Postal Code must be exactly 6 characters long',
     }),
 });
+
+export const clientSchema = profileSchema.merge(
+    z.object({
+        clientId: z.string().min(1, 'Client Id is required').max(255, {
+            message: 'Client Id must be 255 or fewer characters long',
+        }),
+    })
+);
+
+export const paginationSchema = z.object({
+    page: z
+        .number()
+        .int({ message: 'Page must be an integer' })
+        .positive({ message: 'Page must be positive' })
+        .default(1),
+    limit: z
+        .number()
+        .int({ message: 'Limit must be an integer' })
+        .positive({ message: 'Limit must be positive' })
+        .max(100, { message: 'Limit cannot exceed 100' })
+        .default(10),
+});
+
+export const createSortSchema = <T extends z.ZodObject<z.ZodRawShape>>(
+    schema: T
+) => {
+    const keys = Object.keys(schema.shape) as [string, ...string[]];
+    return z
+        .array(
+            z.object({
+                id: z.enum(keys),
+                desc: z.boolean().default(false),
+            })
+        )
+        .default([]);
+};
+
+export const createFilterSchema = <T extends z.ZodObject<z.ZodRawShape>>(
+    schema: T
+) => {
+    const fieldNames = Object.keys(schema.shape) as [string, ...string[]];
+    const filters = fieldNames.map((fieldName) => {
+        const fieldSchema = schema.shape[fieldName];
+        return z.object({
+            id: z.enum([fieldName]),
+            value: fieldSchema.optional(),
+        });
+    });
+
+    return z
+        .array(
+            z.discriminatedUnion(
+                'id',
+                filters as [(typeof filters)[0], ...(typeof filters)[number][]]
+            )
+        )
+        .default([]);
+};

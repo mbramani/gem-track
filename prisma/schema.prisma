@@ -19,17 +19,33 @@ enum UserRole {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  name        String   @db.VarChar(100)
-  email       String   @unique @db.VarChar(256)
-  password    String   @db.VarChar(60)
-  role        UserRole @default(USER)
-  phoneNumber String   @db.VarChar(15)
-  gstInNo     String   @db.VarChar(15)
-  addressId   String   @unique
-  address     Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(256)
+  password  String   @db.VarChar(60)
+  role      UserRole @default(USER)
+  phoneNo   String   @db.VarChar(15)
+  gstInNo   String   @db.VarChar(15)
+  addressId String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  address   Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  clients   Client[]
+}
+
+model Client {
+  id        String   @id @default(uuid())
+  clientId  String   @db.VarChar(256)
+  name      String   @db.VarChar(253)
+  email     String?  @db.VarChar(256)
+  phoneNo   String   @db.VarChar(15)
+  gstInNo   String   @db.VarChar(15)
+  userId    String
+  addressId String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address   Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
 }
 
 model Address {
@@ -42,5 +58,6 @@ model Address {
   postalCode   String   @db.VarChar(6)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  User         User?
+  user         User?
+  client       Client?
 }

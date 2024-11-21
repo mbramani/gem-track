@@ -23,7 +23,7 @@ export async function comparePassword(
 export async function createJWT(payload: JWTPayload): Promise<string> {
     return new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
-        .setExpirationTime('1d')
+        .setExpirationTime('7d')
         .sign(JWT_SECRET);
 }
 

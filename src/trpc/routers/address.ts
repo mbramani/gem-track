@@ -9,7 +9,7 @@ export const addressRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             // Find address by id and user id
             const address = await ctx.db.address.findFirst({
-                where: { id: input.id, User: { id: ctx.userId } },
+                where: { id: input.id, user: { id: ctx.userId } },
             });
 
             if (!address) {
@@ -21,30 +21,26 @@ export const addressRouter = createTRPCRouter({
 
             return { address };
         }),
+
     update: protectedProcedure
         .input(addressSchema.merge(idSchema))
         .mutation(async ({ ctx, input }) => {
-            // Find address by id and user id
-            const address = await ctx.db.address.findFirst({
-                where: { id: input.id, User: { id: ctx.userId } },
+            // Extract id from input to avoid overwriting it
+            const { id, ...updateData } = input;
+
+            // Update address
+            const updatedAddress = await ctx.db.address.updateMany({
+                where: { id, user: { id: ctx.userId } },
+                data: updateData,
             });
 
-            if (!address) {
+            if (updatedAddress.count === 0) {
                 throw new TRPCError({
                     code: 'NOT_FOUND',
                     message: 'Address not found or access denied',
                 });
             }
 
-            // Extract id from input to avoid overwriting it
-            const { id, ...updateData } = input;
-
-            // Update address
-            const updatedAddress = await ctx.db.address.update({
-                where: { id },
-                data: updateData,
-            });
-
-            return { address: updatedAddress };
+            return { message: 'Address updated successfully' };
         }),
 });
