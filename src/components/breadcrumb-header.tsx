@@ -15,13 +15,13 @@ export function BreadcrumbHeader() {
     );
 
     return (
-        <header className="flex items-center h-16 px-4 border-b bg-background">
+        <header className="flex items-center h-auto md:h-16 py-2 px-4 border-b bg-background">
             <nav
                 aria-label="Breadcrumb"
-                className="flex items-center space-x-4"
+                className="flex items-center space-x-3"
             >
                 <SidebarTrigger className="shrink-0" />
-                <ol className="flex items-center space-x-2">
+                <ol className="flex flex-wrap items-center space-x-2">
                     {paths.map((path, index) => {
                         const href = `/${paths.slice(0, index + 1).join('/')}`;
                         const isLast = index === paths.length - 1;

@@ -22,6 +22,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 type AddressFormValues = z.infer<typeof addressSchema>;
 
 export function AddressForm({ addressId }: { addressId: string }) {
+    console.log('addressId', addressId);
     const [{ address }] = trpc.address.getById.useSuspenseQuery({
         id: addressId,
     });
@@ -42,7 +43,7 @@ export function AddressForm({ addressId }: { addressId: string }) {
         },
     });
 
-    const addressForm = useForm<AddressFormValues>({
+    const form = useForm<AddressFormValues>({
         resolver: zodResolver(addressSchema),
         defaultValues: {
             addressLine1: address.addressLine1,
@@ -59,13 +60,13 @@ export function AddressForm({ addressId }: { addressId: string }) {
     }
 
     return (
-        <Form {...addressForm}>
+        <Form {...form}>
             <form
-                onSubmit={addressForm.handleSubmit(onAddressFormSubmit)}
+                onSubmit={form.handleSubmit(onAddressFormSubmit)}
                 className="space-y-8"
             >
                 <FormField
-                    control={addressForm.control}
+                    control={form.control}
                     name="addressLine1"
                     render={({ field }) => (
                         <FormItem>
@@ -78,7 +79,7 @@ export function AddressForm({ addressId }: { addressId: string }) {
                     )}
                 />
                 <FormField
-                    control={addressForm.control}
+                    control={form.control}
                     name="addressLine2"
                     render={({ field }) => (
                         <FormItem>
@@ -91,7 +92,7 @@ export function AddressForm({ addressId }: { addressId: string }) {
                     )}
                 />
                 <FormField
-                    control={addressForm.control}
+                    control={form.control}
                     name="city"
                     render={({ field }) => (
                         <FormItem>
@@ -104,7 +105,7 @@ export function AddressForm({ addressId }: { addressId: string }) {
                     )}
                 />
                 <FormField
-                    control={addressForm.control}
+                    control={form.control}
                     name="state"
                     render={({ field }) => (
                         <FormItem>
@@ -117,7 +118,7 @@ export function AddressForm({ addressId }: { addressId: string }) {
                     )}
                 />
                 <FormField
-                    control={addressForm.control}
+                    control={form.control}
                     name="country"
                     render={({ field }) => (
                         <FormItem>
@@ -130,7 +131,7 @@ export function AddressForm({ addressId }: { addressId: string }) {
                     )}
                 />
                 <FormField
-                    control={addressForm.control}
+                    control={form.control}
                     name="postalCode"
                     render={({ field }) => (
                         <FormItem>

@@ -49,7 +49,7 @@ export function AuthForm() {
         },
     });
 
-    const authForm = useForm<AuthFormValues>({
+    const form = useForm<AuthFormValues>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: '',
@@ -70,13 +70,13 @@ export function AuthForm() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <Form {...authForm}>
+                <Form {...form}>
                     <form
-                        onSubmit={authForm.handleSubmit(onAuthFormSubmit)}
+                        onSubmit={form.handleSubmit(onAuthFormSubmit)}
                         className="space-y-4"
                     >
                         <FormField
-                            control={authForm.control}
+                            control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
@@ -94,7 +94,7 @@ export function AuthForm() {
                             )}
                         />
                         <FormField
-                            control={authForm.control}
+                            control={form.control}
                             name="password"
                             render={({ field }) => (
                                 <FormItem>

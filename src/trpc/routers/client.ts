@@ -17,6 +17,18 @@ export const clientRouter = createTRPCRouter({
         .input(z.object({ client: clientSchema, address: addressSchema }))
         .mutation(async ({ ctx, input }) => {
             const { client, address } = input;
+            // Check if clientId already exists
+            const existingClient = await ctx.db.client.findFirst({
+                where: { clientId: client.clientId, userId: ctx.userId },
+            });
+
+            if (existingClient) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Client ID already exists',
+                });
+            }
+
             // Create a new client and address
             const createdAddress = await ctx.db.address.create({
                 data: {
@@ -46,7 +58,6 @@ export const clientRouter = createTRPCRouter({
             // Find client by id and user id
             const client = await ctx.db.client.findFirst({
                 where: { id: input.id, userId: ctx.userId },
-                include: { address: true },
             });
 
             if (!client) {
@@ -114,7 +125,7 @@ export const clientRouter = createTRPCRouter({
             // Fetch data
             const clients = await ctx.db.client.findMany({
                 where,
-                orderBy,
+                orderBy: orderBy.length > 0 ? orderBy : [{ createdAt: 'desc' }],
                 skip: (page - 1) * limit,
                 take: limit,
             });
@@ -134,13 +145,25 @@ export const clientRouter = createTRPCRouter({
             // Extract id from input to avoid overwriting it
             const { id, ...updateData } = input;
 
+            // Check if clientId already exists
+            const existingClient = await ctx.db.client.findFirst({
+                where: { clientId: updateData.clientId, userId: ctx.userId },
+            });
+
+            if (existingClient && existingClient.id !== id) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Client ID already exists',
+                });
+            }
+
             // Update client
-            const updatedClient = await ctx.db.client.updateMany({
+            const updatedClient = await ctx.db.client.update({
                 where: { id, userId: ctx.userId },
                 data: updateData,
             });
 
-            if (updatedClient.count === 0) {
+            if (!updatedClient) {
                 throw new TRPCError({
                     code: 'NOT_FOUND',
                     message: 'Client not found or access denied',

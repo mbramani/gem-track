@@ -9,7 +9,7 @@ export function BreadcrumbHeaderSkeleton() {
                 className="flex items-center space-x-4"
             >
                 <SidebarTrigger className="shrink-0" />
-                <ol className="flex items-center space-x-2">
+                <ol className="flex items-center space-x-3">
                     <li>
                         <Skeleton className="h-4 w-4" />
                     </li>

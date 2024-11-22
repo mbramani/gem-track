@@ -52,8 +52,13 @@ export const userRouter = createTRPCRouter({
                 data: input,
             });
 
-            // Return user without password
-            const { password, ...userWithoutPassword } = updatedUser;
-            return { profile: userWithoutPassword };
+            if (!updatedUser) {
+                throw new TRPCError({
+                    code: 'NOT_FOUND',
+                    message: 'User not found or access denied',
+                });
+            }
+
+            return { message: 'User updated successfully' };
         }),
 });

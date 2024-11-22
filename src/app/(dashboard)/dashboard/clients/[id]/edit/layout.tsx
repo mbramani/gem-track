@@ -8,14 +8,18 @@ import {
 
 import { ReactNode } from 'react';
 
-export default function ProfileLayout({ children }: { children: ReactNode }) {
+export default function ClientEditLayout({
+    children,
+}: {
+    children: ReactNode;
+}) {
     return (
         <section className="container mx-auto py-10 px-4 max-w-screen-md">
             <Card>
                 <CardHeader>
-                    <CardTitle>Profile Settings</CardTitle>
+                    <CardTitle>Client Information</CardTitle>
                     <CardDescription>
-                        Manage your profile and address information
+                        Update the client&apos;s details and address
                     </CardDescription>
                 </CardHeader>
                 <CardContent>{children}</CardContent>

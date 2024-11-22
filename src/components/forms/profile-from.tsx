@@ -32,16 +32,15 @@ export function ProfileForm() {
                 variant: 'destructive',
             });
         },
-        onSuccess() {
+        onSuccess(data) {
             toast({
                 title: 'Profile updated',
-                description:
-                    'Profile information has been updated successfully.',
+                description: data.message,
             });
         },
     });
 
-    const profileForm = useForm<ProfileFormValues>({
+    const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileSchema),
         defaultValues: {
             name: profile.name,
@@ -56,13 +55,13 @@ export function ProfileForm() {
     }
 
     return (
-        <Form {...profileForm}>
+        <Form {...form}>
             <form
-                onSubmit={profileForm.handleSubmit(onProfileFormSubmit)}
+                onSubmit={form.handleSubmit(onProfileFormSubmit)}
                 className="space-y-8"
             >
                 <FormField
-                    control={profileForm.control}
+                    control={form.control}
                     name="name"
                     render={({ field }) => (
                         <FormItem>
@@ -76,7 +75,7 @@ export function ProfileForm() {
                     )}
                 />
                 <FormField
-                    control={profileForm.control}
+                    control={form.control}
                     name="email"
                     render={({ field }) => (
                         <FormItem>
@@ -93,7 +92,7 @@ export function ProfileForm() {
                     )}
                 />
                 <FormField
-                    control={profileForm.control}
+                    control={form.control}
                     name="phoneNo"
                     render={({ field }) => (
                         <FormItem>
@@ -107,7 +106,7 @@ export function ProfileForm() {
                     )}
                 />
                 <FormField
-                    control={profileForm.control}
+                    control={form.control}
                     name="gstInNo"
                     render={({ field }) => (
                         <FormItem>

@@ -9,10 +9,19 @@ export const addressRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             // Find address by id and user id
             const address = await ctx.db.address.findFirst({
-                where: { id: input.id, user: { id: ctx.userId } },
+                where: { id: input.id },
+                include: { user: true, client: true, employee: true },
             });
 
-            if (!address) {
+            // Check if address exists and user has access
+            if (
+                !address ||
+                !(
+                    address.user?.id === ctx.userId ||
+                    address.client?.userId === ctx.userId ||
+                    address.employee?.userId === ctx.userId
+                )
+            ) {
                 throw new TRPCError({
                     code: 'NOT_FOUND',
                     message: 'Address not found or access denied',
@@ -30,10 +39,18 @@ export const addressRouter = createTRPCRouter({
 
             // Update address
             const updatedAddress = await ctx.db.address.updateMany({
-                where: { id, user: { id: ctx.userId } },
+                where: {
+                    id,
+                    OR: [
+                        { user: { id: ctx.userId } },
+                        { client: { userId: ctx.userId } },
+                        { employee: { userId: ctx.userId } },
+                    ],
+                },
                 data: updateData,
             });
 
+            // Check if address was updated
             if (updatedAddress.count === 0) {
                 throw new TRPCError({
                     code: 'NOT_FOUND',

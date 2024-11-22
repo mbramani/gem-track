@@ -2,6 +2,18 @@ import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 
 import { Skeleton } from '../ui/skeleton';
 
+function FormFieldSkeleton({ fields = 4 }: { fields?: number }) {
+    return (
+        <>
+            {[...Array(fields)].map((_, index) => (
+                <div key={index} className="space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+            ))}
+        </>
+    );
+}
 export function AuthFormSkeleton() {
     return (
         <Card className="w-full max-w-md">
@@ -33,13 +45,7 @@ export function AuthFormSkeleton() {
 export function ProfileFormSkeleton() {
     return (
         <div className="space-y-8">
-            {[...Array(4)].map((_, index) => (
-                <div key={index} className="space-y-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-4 w-full max-w-md" />
-                </div>
-            ))}
+            <FormFieldSkeleton fields={4} />
             <Skeleton className="h-10 w-32" />
         </div>
     );
@@ -48,13 +54,36 @@ export function ProfileFormSkeleton() {
 export function AddressFormSkeleton() {
     return (
         <div className="space-y-8">
-            {[...Array(6)].map((_, index) => (
-                <div key={index} className="space-y-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-10 w-full" />
-                </div>
-            ))}
+            <FormFieldSkeleton fields={6} />
             <Skeleton className="h-10 w-32" />
+        </div>
+    );
+}
+
+export function ClientFormSkeleton() {
+    return (
+        <div className="space-y-8">
+            <FormFieldSkeleton fields={5} />
+            <Skeleton className="h-10 w-32" />
+        </div>
+    );
+}
+export function ClientCreateFormSkeleton() {
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-8">
+                <div>
+                    <Skeleton className="h-6 w-28" />
+                </div>
+                <FormFieldSkeleton fields={5} />
+            </div>
+            <div className="space-y-8">
+                <div>
+                    <Skeleton className="h-6 w-28" />
+                </div>
+                <FormFieldSkeleton fields={5} />
+                <Skeleton className="ml-auto h-10 w-32" />
+            </div>
         </div>
     );
 }
