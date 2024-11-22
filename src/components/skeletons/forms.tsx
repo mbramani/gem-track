@@ -46,7 +46,10 @@ export function ProfileFormSkeleton() {
     return (
         <div className="space-y-8">
             <FormFieldSkeleton fields={4} />
-            <Skeleton className="h-10 w-32" />
+            <div className="flex justify-between">
+                <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-10 w-32" />
+            </div>
         </div>
     );
 }
@@ -55,7 +58,10 @@ export function AddressFormSkeleton() {
     return (
         <div className="space-y-8">
             <FormFieldSkeleton fields={6} />
-            <Skeleton className="h-10 w-32" />
+            <div className="flex justify-between">
+                <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-10 w-32" />
+            </div>
         </div>
     );
 }
@@ -64,11 +70,19 @@ export function ClientFormSkeleton() {
     return (
         <div className="space-y-8">
             <FormFieldSkeleton fields={5} />
-            <Skeleton className="h-10 w-32" />
+            <div className="flex justify-between">
+                <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-10 w-32" />
+            </div>
         </div>
     );
 }
-export function ClientCreateFormSkeleton() {
+
+export function EmployeeFormSkeleton() {
+    return ClientFormSkeleton();
+}
+
+export function CreateFormSkeleton() {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-8">
@@ -82,7 +96,10 @@ export function ClientCreateFormSkeleton() {
                     <Skeleton className="h-6 w-28" />
                 </div>
                 <FormFieldSkeleton fields={5} />
-                <Skeleton className="ml-auto h-10 w-32" />
+                <div className="flex justify-end gap-2">
+                    <Skeleton className="ml-auto h-10 w-32" />
+                    <Skeleton className="ml-auto h-10 w-32" />
+                </div>
             </div>
         </div>
     );

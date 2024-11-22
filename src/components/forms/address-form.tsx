@@ -16,13 +16,14 @@ import { addressSchema } from '@/schemas';
 import { toast } from '@/hooks/use-toast';
 import { trpc } from '@/trpc/client';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 type AddressFormValues = z.infer<typeof addressSchema>;
 
 export function AddressForm({ addressId }: { addressId: string }) {
-    console.log('addressId', addressId);
+    const router = useRouter();
     const [{ address }] = trpc.address.getById.useSuspenseQuery({
         id: addressId,
     });
@@ -144,20 +145,29 @@ export function AddressForm({ addressId }: { addressId: string }) {
                     )}
                 />
 
-                <Button
-                    type="submit"
-                    disabled={updateAddressMutation.isPending}
-                    aria-label="Update Address"
-                >
-                    {updateAddressMutation.isPending ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Updating...
-                        </>
-                    ) : (
-                        'Update Address'
-                    )}
-                </Button>
+                <div className="flex justify-between">
+                    <Button
+                        type="submit"
+                        disabled={updateAddressMutation.isPending}
+                        aria-label="Update Address"
+                    >
+                        {updateAddressMutation.isPending ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Updating...
+                            </>
+                        ) : (
+                            'Update Address'
+                        )}
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => router.back()}
+                    >
+                        Cancel
+                    </Button>
+                </div>
             </form>
         </Form>
     );

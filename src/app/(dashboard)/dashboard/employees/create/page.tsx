@@ -6,24 +6,24 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
-import { ClientCreateForm } from '@/components/forms/client-form';
 import { CreateFormSkeleton } from '@/components/skeletons/forms';
+import { EmployeeCreateForm } from '@/components/forms/employee-form';
 import { Suspense } from 'react';
 
-export default function CreateClientPage() {
+export default function EmployeeCreatePage() {
     return (
         <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold mb-8">Create New Client</h1>
+            <h1 className="text-3xl font-bold mb-8">Create New Employee</h1>
             <Card>
                 <CardHeader>
-                    <CardTitle>Client Information</CardTitle>
+                    <CardTitle>Employee Information</CardTitle>
                     <CardDescription>
-                        Enter the details of the new client
+                        Enter the details of the new employee
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Suspense fallback={<CreateFormSkeleton />}>
-                        <ClientCreateForm />
+                        <EmployeeCreateForm />
                     </Suspense>
                 </CardContent>
             </Card>

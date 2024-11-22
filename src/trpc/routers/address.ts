@@ -38,7 +38,7 @@ export const addressRouter = createTRPCRouter({
             const { id, ...updateData } = input;
 
             // Update address
-            const updatedAddress = await ctx.db.address.updateMany({
+            const updatedAddress = await ctx.db.address.update({
                 where: {
                     id,
                     OR: [
@@ -51,7 +51,7 @@ export const addressRouter = createTRPCRouter({
             });
 
             // Check if address was updated
-            if (updatedAddress.count === 0) {
+            if (!updatedAddress) {
                 throw new TRPCError({
                     code: 'NOT_FOUND',
                     message: 'Address not found or access denied',

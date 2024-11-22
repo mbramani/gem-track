@@ -17,6 +17,19 @@ export const employeeRouter = createTRPCRouter({
         .input(z.object({ employee: employeeSchema, address: addressSchema }))
         .mutation(async ({ ctx, input }) => {
             const { employee, address } = input;
+
+            // Check if employeeId already exists
+            const existingEmployee = await ctx.db.employee.findFirst({
+                where: { employeeId: employee.employeeId, userId: ctx.userId },
+            });
+
+            if (existingEmployee) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Employee ID already exists',
+                });
+            }
+
             // Create a new employee and address
             const createdAddress = await ctx.db.address.create({
                 data: {
@@ -48,7 +61,6 @@ export const employeeRouter = createTRPCRouter({
             // Find employee by id and user id
             const employee = await ctx.db.employee.findFirst({
                 where: { id: input.id, userId: ctx.userId },
-                include: { address: true },
             });
 
             if (!employee) {
@@ -116,7 +128,7 @@ export const employeeRouter = createTRPCRouter({
             // Fetch data
             const employees = await ctx.db.employee.findMany({
                 where,
-                orderBy,
+                orderBy: orderBy.length > 0 ? orderBy : [{ createdAt: 'desc' }],
                 skip: (page - 1) * limit,
                 take: limit,
             });
@@ -136,13 +148,28 @@ export const employeeRouter = createTRPCRouter({
             // Extract id from input to avoid overwriting it
             const { id, ...updateData } = input;
 
+            // Check if employeeId already exists
+            const existingEmployee = await ctx.db.employee.findFirst({
+                where: {
+                    employeeId: updateData.employeeId,
+                    userId: ctx.userId,
+                },
+            });
+
+            if (existingEmployee) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Employee ID already exists',
+                });
+            }
+
             // Update employee
-            const updatedEmployee = await ctx.db.employee.updateMany({
+            const updatedEmployee = await ctx.db.employee.update({
                 where: { id, userId: ctx.userId },
                 data: updateData,
             });
 
-            if (updatedEmployee.count === 0) {
+            if (!updatedEmployee) {
                 throw new TRPCError({
                     code: 'NOT_FOUND',
                     message: 'Employee not found or access denied',

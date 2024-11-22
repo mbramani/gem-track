@@ -38,6 +38,11 @@ import { toast } from '@/hooks/use-toast';
 import { trpc } from '@/trpc/client';
 import { useRouter } from 'next/navigation';
 
+interface DeleteClientDialogProps {
+    client: Client;
+    onDelete: (client: Client) => void;
+}
+
 const generateClientColumns = (
     onView: (client: Client) => void,
     onEdit: (client: Client) => void,
@@ -109,11 +114,6 @@ const generateClientColumns = (
         },
     },
 ];
-
-interface DeleteClientDialogProps {
-    client: Client;
-    onDelete: (client: Client) => void;
-}
 
 function DeleteClientDialog({ client, onDelete }: DeleteClientDialogProps) {
     const [open, setOpen] = useState(false);

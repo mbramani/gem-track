@@ -8,7 +8,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { addressSchema, clientSchema } from '@/schemas';
+import { addressSchema, employeeSchema } from '@/schemas';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,27 +20,26 @@ import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-const clientCreateSchema = z.object({
-    client: clientSchema,
+const employeeCreateSchema = z.object({
+    employee: employeeSchema,
     address: addressSchema,
 });
 
-type ClientCreateValues = z.infer<typeof clientCreateSchema>;
+type EmployeeCreateValues = z.infer<typeof employeeCreateSchema>;
+type EmployeeEditValues = z.infer<typeof employeeSchema>;
 
-type ClientEditValues = z.infer<typeof clientSchema>;
-
-export function ClientCreateForm() {
+export function EmployeeCreateForm() {
     const router = useRouter();
 
-    const form = useForm<ClientCreateValues>({
-        resolver: zodResolver(clientCreateSchema),
+    const form = useForm<EmployeeCreateValues>({
+        resolver: zodResolver(employeeCreateSchema),
         defaultValues: {
-            client: {
-                clientId: '',
+            employee: {
                 name: '',
                 email: '',
                 phoneNo: '',
-                gstInNo: '',
+                employeeId: '',
+                panNo: '',
             },
             address: {
                 addressLine1: '',
@@ -53,25 +52,25 @@ export function ClientCreateForm() {
         },
     });
 
-    const clientCreateMutation = trpc.client.create.useMutation({
+    const employeeCreateMutation = trpc.employee.create.useMutation({
         onSuccess: () => {
             toast({
-                title: 'Client created',
-                description: 'Client has been created successfully.',
+                title: 'Employee created',
+                description: 'Employee has been created successfully.',
             });
-            router.push('/dashboard/clients');
+            router.push('/dashboard/employees');
         },
         onError: (error) => {
             toast({
-                title: 'Error creating client',
+                title: 'Error creating employee',
                 description: error.message,
                 variant: 'destructive',
             });
         },
     });
 
-    function onSubmit(data: ClientCreateValues) {
-        clientCreateMutation.mutate(data);
+    function onSubmit(data: EmployeeCreateValues) {
+        employeeCreateMutation.mutate(data);
     }
 
     return (
@@ -80,21 +79,21 @@ export function ClientCreateForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <fieldset>
                         <legend className="text-lg font-semibold mb-4">
-                            Client Details
+                            Employee Details
                         </legend>
                         <div className="space-y-4">
                             <FormField
                                 control={form.control}
-                                name="client.clientId"
+                                name="employee.employeeId"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="client-id">
-                                            Client ID
+                                        <FormLabel htmlFor="employee-id">
+                                            Employee ID
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="client-id"
-                                                placeholder="Enter client id"
+                                                id="employee-id"
+                                                placeholder="Enter employee id"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -104,16 +103,16 @@ export function ClientCreateForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="client.name"
+                                name="employee.name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="client-name">
+                                        <FormLabel htmlFor="employee-name">
                                             Name
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="client-name"
-                                                placeholder="Enter client name"
+                                                id="employee-name"
+                                                placeholder="Enter employee name"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -123,17 +122,17 @@ export function ClientCreateForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="client.email"
+                                name="employee.email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="client-email">
+                                        <FormLabel htmlFor="employee-email">
                                             Email
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="client-email"
+                                                id="employee-email"
                                                 type="email"
-                                                placeholder="Enter client email"
+                                                placeholder="Enter employee email"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -143,16 +142,16 @@ export function ClientCreateForm() {
                             />
                             <FormField
                                 control={form.control}
-                                name="client.phoneNo"
+                                name="employee.phoneNo"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="client-phone">
+                                        <FormLabel htmlFor="employee-phoneNo">
                                             Phone Number
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="client-phone"
-                                                placeholder="Enter client phone number"
+                                                id="employee-phoneNo"
+                                                placeholder="Enter employee phone number"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -160,18 +159,19 @@ export function ClientCreateForm() {
                                     </FormItem>
                                 )}
                             />
+
                             <FormField
                                 control={form.control}
-                                name="client.gstInNo"
+                                name="employee.panNo"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="client-gstin">
-                                            GSTIN Number
+                                        <FormLabel htmlFor="employee-panNo">
+                                            PAN Number
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="client-gstin"
-                                                placeholder="Enter client GSTIN number"
+                                                id="employee-panNo"
+                                                placeholder="Enter employee PAN number"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -191,12 +191,12 @@ export function ClientCreateForm() {
                                 name="address.addressLine1"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="address-line1">
+                                        <FormLabel htmlFor="addressLine1">
                                             Address Line 1
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="address-line1"
+                                                id="addressLine1"
                                                 placeholder="Enter address line 1"
                                                 {...field}
                                             />
@@ -210,12 +210,12 @@ export function ClientCreateForm() {
                                 name="address.addressLine2"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="address-line2">
+                                        <FormLabel htmlFor="addressLine2">
                                             Address Line 2 (Optional)
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="address-line2"
+                                                id="addressLine2"
                                                 placeholder="Enter address line 2"
                                                 {...field}
                                             />
@@ -229,12 +229,12 @@ export function ClientCreateForm() {
                                 name="address.city"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="address-city">
+                                        <FormLabel htmlFor="city">
                                             City
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="address-city"
+                                                id="city"
                                                 placeholder="Enter city"
                                                 {...field}
                                             />
@@ -248,12 +248,12 @@ export function ClientCreateForm() {
                                 name="address.state"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="address-state">
+                                        <FormLabel htmlFor="state">
                                             State
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="address-state"
+                                                id="state"
                                                 placeholder="Enter state"
                                                 {...field}
                                             />
@@ -267,12 +267,12 @@ export function ClientCreateForm() {
                                 name="address.country"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="address-country">
+                                        <FormLabel htmlFor="country">
                                             Country
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="address-country"
+                                                id="country"
                                                 placeholder="Enter country"
                                                 {...field}
                                             />
@@ -286,12 +286,12 @@ export function ClientCreateForm() {
                                 name="address.postalCode"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel htmlFor="address-postal">
+                                        <FormLabel htmlFor="postalCode">
                                             Postal Code
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id="address-postal"
+                                                id="postalCode"
                                                 placeholder="Enter postal code"
                                                 {...field}
                                             />
@@ -306,15 +306,15 @@ export function ClientCreateForm() {
                 <div className="flex justify-end gap-2">
                     <Button
                         type="submit"
-                        disabled={clientCreateMutation.isPending}
+                        disabled={employeeCreateMutation.isPending}
                     >
-                        {clientCreateMutation.isPending ? (
+                        {employeeCreateMutation.isPending ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 Creating...
                             </>
                         ) : (
-                            'Create Client'
+                            'Create Employee'
                         )}
                     </Button>
 
@@ -331,11 +331,11 @@ export function ClientCreateForm() {
     );
 }
 
-export function ClientEditForm({ id }: { id: string }) {
+export function EmployeeEditForm({ id }: { id: string }) {
     const router = useRouter();
-    const [{ client }] = trpc.client.getById.useSuspenseQuery({ id });
+    const [{ employee }] = trpc.employee.getById.useSuspenseQuery({ id });
 
-    const updateClientMutation = trpc.client.update.useMutation({
+    const updateEmployeeMutation = trpc.employee.update.useMutation({
         onError(error) {
             toast({
                 title: 'Update failed',
@@ -345,42 +345,45 @@ export function ClientEditForm({ id }: { id: string }) {
         },
         onSuccess(data) {
             toast({
-                title: 'Client updated',
+                title: 'Employee updated',
                 description: data.message,
             });
         },
     });
 
-    const form = useForm<ClientEditValues>({
-        resolver: zodResolver(clientSchema),
+    const form = useForm<EmployeeEditValues>({
+        resolver: zodResolver(employeeSchema),
         defaultValues: {
-            clientId: client.clientId,
-            name: client.name,
-            email: client?.email || '',
-            phoneNo: client.phoneNo,
-            gstInNo: client.gstInNo,
+            name: employee.name,
+            email: employee?.email || '',
+            phoneNo: employee.phoneNo,
+            employeeId: employee.employeeId,
+            panNo: employee.panNo,
         },
     });
 
-    function onClientFormSubmit(data: ClientEditValues) {
-        updateClientMutation.mutate({ ...data, id });
+    function onEmployeeFormSubmit(data: EmployeeEditValues) {
+        updateEmployeeMutation.mutate({ ...data, id });
     }
 
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(onClientFormSubmit)}
+                onSubmit={form.handleSubmit(onEmployeeFormSubmit)}
                 className="space-y-8"
             >
                 <FormField
                     control={form.control}
-                    name="clientId"
+                    name="employeeId"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Client ID</FormLabel>
+                            <FormLabel htmlFor="employeeId">
+                                Employee ID
+                            </FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="Enter client ID"
+                                    id="employeeId"
+                                    placeholder="Enter employee ID"
                                     {...field}
                                 />
                             </FormControl>
@@ -393,11 +396,14 @@ export function ClientEditForm({ id }: { id: string }) {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel htmlFor="name">Name</FormLabel>
                             <FormControl>
-                                <Input placeholder="John Doe" {...field} />
+                                <Input
+                                    id="name"
+                                    placeholder="Enter full name"
+                                    {...field}
+                                />
                             </FormControl>
-
                             <FormMessage />
                         </FormItem>
                     )}
@@ -407,14 +413,15 @@ export function ClientEditForm({ id }: { id: string }) {
                     name="email"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel htmlFor="email">Email</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="john@example.com"
+                                    id="email"
+                                    type="email"
+                                    placeholder="Enter email"
                                     {...field}
                                 />
                             </FormControl>
-
                             <FormMessage />
                         </FormItem>
                     )}
@@ -424,28 +431,33 @@ export function ClientEditForm({ id }: { id: string }) {
                     name="phoneNo"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
+                            <FormLabel htmlFor="phoneNo">
+                                Phone Number
+                            </FormLabel>
                             <FormControl>
-                                <Input placeholder="1234567890" {...field} />
+                                <Input
+                                    id="phoneNo"
+                                    placeholder="Enter phone number"
+                                    {...field}
+                                />
                             </FormControl>
-
                             <FormMessage />
                         </FormItem>
                     )}
                 />
                 <FormField
                     control={form.control}
-                    name="gstInNo"
+                    name="panNo"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>GSTIN Number</FormLabel>
+                            <FormLabel htmlFor="panNo">PAN Number</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="22AAAAA0000A1Z5"
+                                    id="panNo"
+                                    placeholder="Enter PAN number"
                                     {...field}
                                 />
                             </FormControl>
-
                             <FormMessage />
                         </FormItem>
                     )}
@@ -453,16 +465,16 @@ export function ClientEditForm({ id }: { id: string }) {
                 <div className="flex justify-between">
                     <Button
                         type="submit"
-                        disabled={updateClientMutation.isPending}
-                        aria-label="Update Client"
+                        disabled={updateEmployeeMutation.isPending}
+                        aria-label="Update Employee"
                     >
-                        {updateClientMutation.isPending ? (
+                        {updateEmployeeMutation.isPending ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 Updating...
                             </>
                         ) : (
-                            'Update Client'
+                            'Update Employee'
                         )}
                     </Button>
 

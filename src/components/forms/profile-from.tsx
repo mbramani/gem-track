@@ -16,12 +16,14 @@ import { profileSchema } from '@/schemas';
 import { toast } from '@/hooks/use-toast';
 import { trpc } from '@/trpc/client';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export function ProfileForm() {
+    const router = useRouter();
     const [{ profile }] = trpc.user.getProfile.useSuspenseQuery();
 
     const updateProfileMutation = trpc.user.updateProfile.useMutation({
@@ -122,20 +124,29 @@ export function ProfileForm() {
                         </FormItem>
                     )}
                 />
-                <Button
-                    type="submit"
-                    disabled={updateProfileMutation.isPending}
-                    aria-label="Update Profile"
-                >
-                    {updateProfileMutation.isPending ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Updating...
-                        </>
-                    ) : (
-                        'Update Profile'
-                    )}
-                </Button>
+                <div className="flex justify-between">
+                    <Button
+                        type="submit"
+                        disabled={updateProfileMutation.isPending}
+                        aria-label="Update Profile"
+                    >
+                        {updateProfileMutation.isPending ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Updating...
+                            </>
+                        ) : (
+                            'Update Profile'
+                        )}
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => router.back()}
+                    >
+                        Cancel
+                    </Button>
+                </div>
             </form>
         </Form>
     );

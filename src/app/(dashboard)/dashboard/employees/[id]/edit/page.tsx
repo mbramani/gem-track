@@ -1,29 +1,29 @@
 import {
     AddressFormSkeleton,
-    ClientFormSkeleton,
+    EmployeeFormSkeleton,
 } from '@/components/skeletons/forms';
 
 import { AddressForm } from '@/components/forms/address-form';
-import { ClientEditForm } from '@/components/forms/client-form';
+import { EmployeeEditForm } from '@/components/forms/employee-form';
 import { Suspense } from 'react';
 import { TabWrapper } from '@/components/tab-wrapper';
 import { idSchema } from '@/schemas';
 import { notFound } from 'next/navigation';
 import { trpc } from '@/trpc/server';
 
-export default async function ClientEditPage({
+export default async function EmployeeEditPage({
     params,
 }: {
     params: Promise<{ id: string }>;
 }) {
-    let id, client;
+    let id, employee;
     try {
         id = (await params)?.id;
         idSchema.parse({ id });
-        const response = await trpc.client.getById({ id });
-        client = response.client;
+        const result = await trpc.employee.getById({ id });
+        employee = result.employee;
 
-        if (!client) {
+        if (!employee) {
             return notFound();
         }
     } catch {
@@ -34,11 +34,11 @@ export default async function ClientEditPage({
         <TabWrapper
             tabs={[
                 {
-                    value: 'client',
-                    label: 'Client',
+                    value: 'employee',
+                    label: 'Employee',
                     component: (
-                        <Suspense fallback={<ClientFormSkeleton />}>
-                            <ClientEditForm id={id} />
+                        <Suspense fallback={<EmployeeFormSkeleton />}>
+                            <EmployeeEditForm id={id} />
                         </Suspense>
                     ),
                 },
@@ -47,7 +47,7 @@ export default async function ClientEditPage({
                     label: 'Address',
                     component: (
                         <Suspense fallback={<AddressFormSkeleton />}>
-                            <AddressForm addressId={client.addressId} />
+                            <AddressForm addressId={employee.addressId} />
                         </Suspense>
                     ),
                 },
