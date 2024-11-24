@@ -183,11 +183,11 @@ export const employeeRouter = createTRPCRouter({
         .input(idSchema)
         .mutation(async ({ ctx, input }) => {
             // Delete employee by id and user id
-            const deletedEmployee = await ctx.db.employee.deleteMany({
+            const deletedEmployee = await ctx.db.employee.delete({
                 where: { id: input.id, userId: ctx.userId },
             });
 
-            if (deletedEmployee.count === 0) {
+            if (!deletedEmployee) {
                 throw new TRPCError({
                     code: 'NOT_FOUND',
                     message: 'Employee not found or access denied',

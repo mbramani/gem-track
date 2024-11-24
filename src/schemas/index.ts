@@ -1,3 +1,5 @@
+import { DiamondColor, DiamondPurity, DiamondShape } from '@prisma/client';
+
 import { z } from 'zod';
 
 const GST_IN_REGEX = /^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/;
@@ -96,6 +98,51 @@ export const employeeSchema = profileSchema
                 .regex(PAN_NO_REGEX, { message: 'Invalid Pan number' }),
         })
     );
+
+export const diamondPacketSchema = z.object({
+    diamondPacketId: z
+        .string()
+        .min(1, { message: 'Diamond Packet ID is required' }),
+    batchNo: z.number().multipleOf(0.01, {
+        message: 'Batch number must be a multiple of 0.01',
+    }),
+    evNo: z
+        .number()
+        .int({ message: 'EV number must be an integer' })
+        .optional(),
+    packetNo: z.number().multipleOf(0.01, {
+        message: 'Packet number must be a multiple of 0.01',
+    }),
+    lot: z.number().int({ message: 'Lot must be an integer' }),
+    piece: z.number().int({ message: 'Piece must be an integer' }),
+    makeableWeight: z
+        .number()
+        .multipleOf(0.0001)
+        .positive({ message: 'Makeable weight must be positive' }),
+    expectedWeight: z
+        .number()
+        .multipleOf(0.0001)
+        .positive({ message: 'Expected weight must be positive' }),
+    booterWeight: z
+        .number()
+        .multipleOf(0.0001)
+        .positive({ message: 'Booter weight must be positive' }),
+    diamondShape: z.nativeEnum(DiamondShape, {
+        message: 'Invalid diamond shape',
+    }),
+    diamondColor: z.nativeEnum(DiamondColor, {
+        message: 'Invalid diamond color',
+    }),
+    diamondPurity: z.nativeEnum(DiamondPurity, {
+        message: 'Invalid diamond purity',
+    }),
+    receiveDateTime: z.date({ message: 'Invalid receive date time' }),
+    deliveryDateTime: z
+        .date({ message: 'Invalid delivery date time' })
+        .optional(),
+    clientId: z.string().uuid({ message: 'Invalid client ID' }),
+    userId: z.string().uuid({ message: 'Invalid user ID' }),
+});
 
 export const paginationSchema = z.object({
     page: z

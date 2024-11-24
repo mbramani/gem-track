@@ -1,6 +1,12 @@
 // prisma/seed.ts
 
-import { PrismaClient } from '@prisma/client';
+import {
+    DiamondColor,
+    DiamondPurity,
+    DiamondShape,
+    PrismaClient,
+} from '@prisma/client';
+
 import { hash } from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -71,6 +77,11 @@ function generateAddress() {
     };
 }
 
+function getRandomEnumValue<T extends object>(enumObj: T): T[keyof T] {
+    const values = Object.values(enumObj) as T[keyof T][];
+    return values[Math.floor(Math.random() * values.length)];
+}
+
 async function seed() {
     try {
         console.log(`🚀 Seeding started...`);
@@ -79,6 +90,7 @@ async function seed() {
         await prisma.client.deleteMany();
         await prisma.address.deleteMany();
         await prisma.user.deleteMany();
+        await prisma.diamondPacket.deleteMany();
 
         // Create test user with address
         const userAddress = await prisma.address.create({
@@ -88,7 +100,7 @@ async function seed() {
         const hashedPassword = await hash('Test@1234', 10);
         const user = await prisma.user.create({
             data: {
-                email: 'test@gem-track.com',
+                email: 'test@gemtrack.com',
                 name: 'Test User',
                 password: hashedPassword,
                 phoneNo: generatePhoneNumber(),
@@ -139,11 +151,79 @@ async function seed() {
             })
         );
 
+        // Create 25 test diamond packet
+        const diamondPackets = await Promise.all(
+            Array.from({ length: 25 }, async (_, i) => {
+                const client =
+                    clients[Math.floor(Math.random() * clients.length)];
+
+                const piece = Math.floor(Math.random() * 9) + 1;
+                const makeableWeight = Number(
+                    (Math.random() * 50 + 10).toFixed(4)
+                );
+                const expectedWeight = Number(
+                    (makeableWeight * (0.7 + Math.random() * 0.2)).toFixed(4)
+                );
+                const booterWeight = Number(
+                    (expectedWeight * (0.8 + Math.random() * 0.15)).toFixed(4)
+                );
+
+                // Calculate computed values
+                const size = Number((makeableWeight / piece).toFixed(4));
+                const expectedPercentage = Number(
+                    ((expectedWeight / makeableWeight) * 100).toFixed(2)
+                );
+
+                return await prisma.diamondPacket.create({
+                    data: {
+                        diamondPacketId: `DP${String(i + 1).padStart(4, '0')}`,
+                        batchNo: Number((Math.random() * 100).toFixed(2)),
+                        evNo: Math.floor(Math.random() * 1000),
+                        packetNo: Number((Math.random() * 100).toFixed(2)),
+                        lot: Math.floor(Math.random() * 100),
+                        piece,
+                        makeableWeight,
+                        expectedWeight,
+                        booterWeight,
+                        size,
+                        expectedPercentage,
+                        diamondShape:
+                            Object.values(DiamondShape)[
+                                Math.floor(
+                                    Math.random() *
+                                        Object.values(DiamondShape).length
+                                )
+                            ],
+                        diamondColor:
+                            Object.values(DiamondColor)[
+                                Math.floor(
+                                    Math.random() *
+                                        Object.values(DiamondColor).length
+                                )
+                            ],
+                        diamondPurity:
+                            Object.values(DiamondPurity)[
+                                Math.floor(
+                                    Math.random() *
+                                        Object.values(DiamondPurity).length
+                                )
+                            ],
+                        receiveDateTime: new Date(),
+                        clientId: client.id,
+                        userId: user.id,
+                    },
+                });
+            })
+        );
+
         console.log(`🌟 Seeding completed successfully!`);
         console.log(`👤 User: ${user.email}`);
         console.log(`🔑 Password: Test@1234`);
         console.log(`👥 Number of clients created: ${clients.length}`);
         console.log(`👷 Number of employees created: ${employees.length}`);
+        console.log(
+            `💎 Number of diamond packets created: ${diamondPackets.length}`
+        );
     } catch (error) {
         console.error('Error seeding database:', error);
         process.exit(1);

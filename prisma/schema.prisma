@@ -18,35 +18,92 @@ enum UserRole {
   ADMIN
 }
 
+enum DiamondColor {
+  D
+  E
+  F
+  G
+  H
+  I
+  J
+  K
+  L
+  M
+  N
+  O
+  P
+  Q
+  R
+  S
+  T
+  U
+  V
+  W
+  X
+  Y
+  Z
+}
+
+enum DiamondPurity {
+  FL
+  IF
+  I1
+  I2
+  I3
+  SI1
+  SI2
+  VS1
+  VS2
+  VVS1
+  VVS2
+}
+
+enum DiamondShape {
+  Asscher
+  Cushion
+  Emerald
+  Heart
+  Marquise
+  Oval
+  Pear
+  Princess
+  Radiant
+  Round
+}
+
 model User {
-  id        String     @id @default(uuid())
-  name      String     @db.VarChar(100)
-  email     String     @unique @db.VarChar(256)
-  password  String     @db.VarChar(60)
-  role      UserRole   @default(USER)
-  phoneNo   String     @db.VarChar(15)
-  gstInNo   String     @db.VarChar(15)
-  addressId String     @unique
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  address   Address    @relation(fields: [addressId], references: [id], onDelete: Cascade)
-  clients   Client[]
-  Employee  Employee[]
+  id             String          @id @default(uuid())
+  name           String          @db.VarChar(100)
+  email          String          @unique @db.VarChar(256)
+  password       String          @db.VarChar(60)
+  role           UserRole        @default(USER)
+  phoneNo        String          @db.VarChar(15)
+  gstInNo        String          @db.VarChar(15)
+  addressId      String          @unique
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  address        Address         @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  // Relations
+  clients        Client[]
+  employees      Employee[]
+  diamondPackets DiamondPacket[]
 }
 
 model Client {
-  id        String   @id @default(uuid())
-  clientId  String   @db.VarChar(256)
-  name      String   @db.VarChar(253)
-  email     String?  @db.VarChar(256)
-  phoneNo   String   @db.VarChar(15)
-  gstInNo   String   @db.VarChar(15)
-  userId    String
-  addressId String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  address   Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  id             String          @id @default(uuid())
+  clientId       String          @db.VarChar(256)
+  name           String          @db.VarChar(253)
+  email          String?         @db.VarChar(256)
+  phoneNo        String          @db.VarChar(15)
+  gstInNo        String          @db.VarChar(15)
+  userId         String
+  addressId      String          @unique
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  // Relations
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address        Address         @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  diamondPackets DiamondPacket[]
 }
 
 model Employee {
@@ -60,6 +117,7 @@ model Employee {
   addressId  String   @unique
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  // Relations
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   address    Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
 }
@@ -74,7 +132,35 @@ model Address {
   postalCode   String    @db.VarChar(6)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  // Relations
   user         User?
   client       Client?
   employee     Employee?
+}
+
+model DiamondPacket {
+  id                 String        @id @default(uuid())
+  diamondPacketId    String        @db.VarChar(255)
+  batchNo            Decimal?      @db.Decimal(10, 2)
+  evNo               Int?
+  packetNo           Decimal?      @db.Decimal
+  lot                Int?          @db.SmallInt
+  piece              Int?          @db.SmallInt
+  makeableWeight     Decimal       @db.Decimal(10, 4)
+  expectedWeight     Decimal       @db.Decimal(10, 4)
+  booterWeight       Decimal       @db.Decimal(10, 4)
+  diamondShape       DiamondShape
+  diamondColor       DiamondColor
+  diamondPurity      DiamondPurity
+  size               Decimal       @db.Decimal(10, 4) // makeableWeight / piece
+  expectedPercentage Decimal       @db.Decimal(10, 4) // (expectedWeight / makeableWeight) * 100
+  receiveDateTime    DateTime      @db.Timestamptz
+  deliveryDateTime   DateTime?     @db.Timestamptz
+  clientId           String
+  userId             String
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  // Relations
+  client             Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

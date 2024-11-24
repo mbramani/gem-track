@@ -122,7 +122,7 @@ export const clientRouter = createTRPCRouter({
                 [id]: desc ? 'desc' : 'asc',
             }));
 
-            // Fetch data
+            // Find clients
             const clients = await ctx.db.client.findMany({
                 where,
                 orderBy: orderBy.length > 0 ? orderBy : [{ createdAt: 'desc' }],
@@ -130,6 +130,7 @@ export const clientRouter = createTRPCRouter({
                 take: limit,
             });
 
+            // Count total clients
             const total = await ctx.db.client.count({ where });
 
             return {
@@ -177,11 +178,11 @@ export const clientRouter = createTRPCRouter({
         .input(idSchema)
         .mutation(async ({ ctx, input }) => {
             // Delete client by id and user id
-            const deletedClient = await ctx.db.client.deleteMany({
+            const deletedClient = await ctx.db.client.delete({
                 where: { id: input.id, userId: ctx.userId },
             });
 
-            if (deletedClient.count === 0) {
+            if (!deletedClient) {
                 throw new TRPCError({
                     code: 'NOT_FOUND',
                     message: 'Client not found or access denied',
