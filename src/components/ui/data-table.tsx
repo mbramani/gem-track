@@ -50,7 +50,7 @@ import {
     TooltipTrigger,
 } from './tooltip';
 import { cn, toSentenceCase } from '@/lib/utils';
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from './button';
 import { Input } from './input';
@@ -173,23 +173,35 @@ export function DataTableFilter<
     TSchema extends z.ZodObject<z.ZodRawShape>,
 >({ table, schema }: DataTableFilterProps<TData, TSchema>) {
     const triggerRef = useRef<HTMLButtonElement>(null);
+    const [selectedColumn, setSelectedColumn] = useState<string>('');
+    const [searchValue, setSearchValue] = useState<string | number>('');
 
-    const [selectedColumn, setSelectedColumn] = useState<string>(() => {
-        const filteredColumn = table
-            .getAllColumns()
-            .find((column) => column.getIsFiltered());
-        return filteredColumn?.id || table.getAllColumns()[0]?.id || '';
-    });
-
-    const [searchValue, setSearchValue] = useState<string>(
-        table.getColumn(selectedColumn)?.getFilterValue() as string
+    const filterableColumns = useMemo(
+        () => table.getAllColumns().filter((column) => column.getCanFilter()),
+        [table]
     );
+
+    useEffect(() => {
+        const filteredColumn = filterableColumns.find((column) =>
+            column.getIsFiltered()
+        );
+        setSelectedColumn(filteredColumn?.id || filterableColumns[0]?.id || '');
+    }, [filterableColumns]);
+
+    useEffect(() => {
+        const currentFilterValue = table
+            .getColumn(selectedColumn)
+            ?.getFilterValue() as string;
+        setSearchValue(currentFilterValue || '');
+    }, [selectedColumn, table]);
+
+    const getFieldSchema = (columnId: string) =>
+        schema.shape[columnId] as z.ZodTypeAny;
 
     const handleColumnChange = (columnId: string) => {
         if (selectedColumn) {
             table.getColumn(selectedColumn)?.setFilterValue(undefined);
         }
-
         setSelectedColumn(columnId);
         setSearchValue('');
     };
@@ -197,12 +209,16 @@ export function DataTableFilter<
     const handleSearch = () => {
         if (!selectedColumn) return;
 
-        const fieldSchema = schema.shape[selectedColumn] as z.ZodTypeAny;
+        const fieldSchema = getFieldSchema(selectedColumn);
         if (!fieldSchema) return;
 
         try {
-            fieldSchema.parse(searchValue);
-            table.getColumn(selectedColumn)?.setFilterValue(searchValue);
+            const parsedValue =
+                fieldSchema instanceof z.ZodNumber
+                    ? Number(searchValue)
+                    : searchValue;
+            fieldSchema.parse(parsedValue);
+            table.getColumn(selectedColumn)?.setFilterValue(parsedValue);
         } catch (err) {
             if (err instanceof z.ZodError) {
                 toast({
@@ -215,6 +231,52 @@ export function DataTableFilter<
         }
     };
 
+    const renderInput = () => {
+        const fieldSchema = getFieldSchema(selectedColumn);
+
+        if (fieldSchema instanceof z.ZodNativeEnum) {
+            return (
+                <Select
+                    value={searchValue as string}
+                    onValueChange={(value) => setSearchValue(value)}
+                    disabled={!selectedColumn}
+                >
+                    <SelectTrigger className="h-8 w-52">
+                        <SelectValue
+                            placeholder={`Select ${toSentenceCase(selectedColumn)}...`}
+                        />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.values(fieldSchema.enum).map((value) => (
+                            <SelectItem
+                                className="cursor-pointer"
+                                key={value as string}
+                                value={value as string}
+                            >
+                                {value as string}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            );
+        }
+
+        return (
+            <Input
+                type={fieldSchema instanceof z.ZodNumber ? 'number' : 'text'}
+                placeholder={
+                    selectedColumn
+                        ? `Search ${toSentenceCase(selectedColumn)}...`
+                        : 'Select a column'
+                }
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                className="h-8 w-52"
+                disabled={!selectedColumn}
+            />
+        );
+    };
+
     return (
         <div className="flex items-center space-x-2">
             <Popover modal>
@@ -225,7 +287,7 @@ export function DataTableFilter<
                         variant="outline"
                         role="combobox"
                         size="sm"
-                        className="w-28 justify-between"
+                        className="min-w-24 max-w-fit justify-between"
                     >
                         {selectedColumn
                             ? toSentenceCase(selectedColumn)
@@ -243,47 +305,30 @@ export function DataTableFilter<
                         <CommandList>
                             <CommandEmpty>No columns found.</CommandEmpty>
                             <CommandGroup>
-                                {table
-                                    .getAllColumns()
-                                    .filter((column) => column.getCanFilter())
-                                    .map((column) => {
-                                        return (
-                                            <CommandItem
-                                                key={column.id}
-                                                onSelect={() =>
-                                                    handleColumnChange(
-                                                        column.id
-                                                    )
-                                                }
-                                                role="option"
-                                                aria-selected={
-                                                    column.id === selectedColumn
-                                                }
-                                                className="cursor-pointer"
-                                            >
-                                                <span className="truncate">
-                                                    {toSentenceCase(column.id)}
-                                                </span>
-                                            </CommandItem>
-                                        );
-                                    })}
+                                {filterableColumns.map((column) => (
+                                    <CommandItem
+                                        key={column.id}
+                                        onSelect={() =>
+                                            handleColumnChange(column.id)
+                                        }
+                                        role="option"
+                                        aria-selected={
+                                            column.id === selectedColumn
+                                        }
+                                        className="cursor-pointer"
+                                    >
+                                        <span className="truncate">
+                                            {toSentenceCase(column.id)}
+                                        </span>
+                                    </CommandItem>
+                                ))}
                             </CommandGroup>
                         </CommandList>
                     </Command>
                 </PopoverContent>
             </Popover>
             <div className="flex items-center space-x-2">
-                <Input
-                    placeholder={
-                        selectedColumn
-                            ? `Search ${toSentenceCase(selectedColumn)}...`
-                            : 'Select a column'
-                    }
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    className="h-8 w-52"
-                    disabled={!selectedColumn}
-                />
+                {renderInput()}
                 <Button
                     size="sm"
                     onClick={handleSearch}
@@ -315,7 +360,7 @@ export function DataTableResetFilterButton<TData>({
             onClick={handleResetFilters}
         >
             <RotateCcw className="h-4 w-4" />
-            <span className="hidden sm:inline-block">Reset</span>
+            Reset
         </Button>
     );
 }

@@ -187,27 +187,9 @@ async function seed() {
                         booterWeight,
                         size,
                         expectedPercentage,
-                        diamondShape:
-                            Object.values(DiamondShape)[
-                                Math.floor(
-                                    Math.random() *
-                                        Object.values(DiamondShape).length
-                                )
-                            ],
-                        diamondColor:
-                            Object.values(DiamondColor)[
-                                Math.floor(
-                                    Math.random() *
-                                        Object.values(DiamondColor).length
-                                )
-                            ],
-                        diamondPurity:
-                            Object.values(DiamondPurity)[
-                                Math.floor(
-                                    Math.random() *
-                                        Object.values(DiamondPurity).length
-                                )
-                            ],
+                        diamondShape: getRandomEnumValue(DiamondShape),
+                        diamondColor: getRandomEnumValue(DiamondColor),
+                        diamondPurity: getRandomEnumValue(DiamondPurity),
                         receiveDateTime: new Date(),
                         clientId: client.id,
                         userId: user.id,

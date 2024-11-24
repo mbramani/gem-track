@@ -141,7 +141,6 @@ export const diamondPacketSchema = z.object({
         .date({ message: 'Invalid delivery date time' })
         .optional(),
     clientId: z.string().uuid({ message: 'Invalid client ID' }),
-    userId: z.string().uuid({ message: 'Invalid user ID' }),
 });
 
 export const paginationSchema = z.object({
