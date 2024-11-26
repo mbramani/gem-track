@@ -128,7 +128,7 @@ export const employeeRouter = createTRPCRouter({
             // Fetch data
             const employees = await ctx.db.employee.findMany({
                 where,
-                orderBy: orderBy.length > 0 ? orderBy : [{ createdAt: 'desc' }],
+                orderBy: orderBy.length > 0 ? orderBy : [{ updatedAt: 'desc' }],
                 skip: (page - 1) * limit,
                 take: limit,
             });

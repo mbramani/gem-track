@@ -125,7 +125,7 @@ export const clientRouter = createTRPCRouter({
             // Find clients
             const clients = await ctx.db.client.findMany({
                 where,
-                orderBy: orderBy.length > 0 ? orderBy : [{ createdAt: 'desc' }],
+                orderBy: orderBy.length > 0 ? orderBy : [{ updatedAt: 'desc' }],
                 skip: (page - 1) * limit,
                 take: limit,
             });

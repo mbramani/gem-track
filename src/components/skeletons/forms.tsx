@@ -82,20 +82,20 @@ export function EmployeeFormSkeleton() {
     return ClientFormSkeleton();
 }
 
-export function CreateFormSkeleton() {
+export function CreateFormSkeleton({ fields = 5 }: { fields?: number }) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-8">
                 <div>
                     <Skeleton className="h-6 w-28" />
                 </div>
-                <FormFieldSkeleton fields={5} />
+                <FormFieldSkeleton fields={fields} />
             </div>
             <div className="space-y-8">
                 <div>
                     <Skeleton className="h-6 w-28" />
                 </div>
-                <FormFieldSkeleton fields={5} />
+                <FormFieldSkeleton fields={fields} />
                 <div className="flex justify-end gap-2">
                     <Skeleton className="ml-auto h-10 w-32" />
                     <Skeleton className="ml-auto h-10 w-32" />

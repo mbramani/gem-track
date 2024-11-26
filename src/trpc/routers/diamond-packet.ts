@@ -37,6 +37,7 @@ export const diamondPacketRouter = createTRPCRouter({
             // Find diamond packet by id and user id
             const diamondPacket = await ctx.db.diamondPacket.findFirst({
                 where: { id: input.id, userId: ctx.userId },
+                include: { client: true },
             });
 
             if (!diamondPacket) {
@@ -96,7 +97,7 @@ export const diamondPacketRouter = createTRPCRouter({
             // Find diamond packets
             const diamondPackets = await ctx.db.diamondPacket.findMany({
                 where,
-                orderBy: orderBy.length > 0 ? orderBy : [{ createdAt: 'desc' }],
+                orderBy: orderBy.length > 0 ? orderBy : [{ updatedAt: 'desc' }],
                 skip: (page - 1) * limit,
                 take: limit,
             });

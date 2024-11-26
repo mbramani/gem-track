@@ -15,6 +15,7 @@ export default function ClientEditLayout({
 }) {
     return (
         <section className="container mx-auto py-10 px-4 max-w-screen-md">
+            <h1 className="text-2xl md:text-3xl font-bold mb-8">Edit Client</h1>
             <Card>
                 <CardHeader>
                     <CardTitle>Client Information</CardTitle>

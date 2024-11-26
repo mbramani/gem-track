@@ -271,14 +271,14 @@ export function DataTableFilter<
                 }
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                className="h-8 w-52"
+                className="h-8 w-52 placeholder:text-xs"
                 disabled={!selectedColumn}
             />
         );
     };
 
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap gap-2 items-center">
             <Popover modal>
                 <PopoverTrigger asChild>
                     <Button
@@ -292,7 +292,7 @@ export function DataTableFilter<
                         {selectedColumn
                             ? toSentenceCase(selectedColumn)
                             : 'Select column'}
-                        <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
+                        <ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent
@@ -334,7 +334,7 @@ export function DataTableFilter<
                     onClick={handleSearch}
                     disabled={!selectedColumn || !searchValue}
                 >
-                    <Search className="h-4 w-4" />
+                    <Search className="size-4" />
                     <span className="sr-only">Search</span>
                 </Button>
             </div>
@@ -345,21 +345,18 @@ export function DataTableFilter<
 export function DataTableResetFilterButton<TData>({
     table,
 }: DataTableResetFilterButtonProps<TData>) {
-    const triggerRef = useRef<HTMLButtonElement>(null);
-
     const handleResetFilters = () => {
         table.resetColumnFilters();
     };
 
     return (
         <Button
-            ref={triggerRef}
             aria-label="Reset filters"
             variant="outline"
             size="sm"
             onClick={handleResetFilters}
         >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className="size-4" />
             Reset
         </Button>
     );
@@ -454,7 +451,7 @@ export function DataTableSortableHeader<TData>({
                                 isMultiSort
                             );
                         }}
-                        className="flex items-center -ml-2 !p-1.5"
+                        className="flex items-center -ml-2 !p-1.5 text-sm"
                         aria-label={`Sort by ${title}`}
                     >
                         {title}
