@@ -174,7 +174,7 @@ const generateClientColumns = (
                         size="sm"
                         onClick={() => onView(diamondPacket)}
                     >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="size-4" />
                         <span className="sr-only">
                             View {diamondPacket.diamondPacketId}
                         </span>
@@ -184,7 +184,7 @@ const generateClientColumns = (
                         size="sm"
                         onClick={() => onEdit(diamondPacket)}
                     >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="size-4" />
                         <span className="sr-only">
                             Edit {diamondPacket.diamondPacketId}
                         </span>
@@ -214,7 +214,7 @@ function DeleteDiamondPacketDialog({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="size-4" />
                     <span className="sr-only">
                         Delete {diamondPacket.diamondPacketId}
                     </span>

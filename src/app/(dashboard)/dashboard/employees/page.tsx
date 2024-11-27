@@ -15,7 +15,7 @@ export default function EmployeesPage() {
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl md:text-3xl font-bold ">Employee</h1>
                 <Button onClick={() => router.push('employees/create')}>
-                    <Plus className="h-4 w-4" /> Add New Employee
+                    <Plus className="size-4" /> Add New Employee
                 </Button>
             </div>
             <Suspense fallback={<TableSkeleton columns={7} rows={10} />}>

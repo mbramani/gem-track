@@ -310,7 +310,7 @@ export function ClientCreateForm() {
                     >
                         {clientCreateMutation.isPending ? (
                             <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="mr-2 size-4 animate-spin" />
                                 Creating...
                             </>
                         ) : (
@@ -458,7 +458,7 @@ export function ClientEditForm({ id }: { id: string }) {
                     >
                         {updateClientMutation.isPending ? (
                             <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="mr-2 size-4 animate-spin" />
                                 Updating...
                             </>
                         ) : (

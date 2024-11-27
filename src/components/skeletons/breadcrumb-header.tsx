@@ -11,7 +11,7 @@ export function BreadcrumbHeaderSkeleton() {
                 <SidebarTrigger className="shrink-0" />
                 <ol className="flex items-center space-x-3">
                     <li>
-                        <Skeleton className="h-4 w-4" />
+                        <Skeleton className="size-4" />
                     </li>
                     <li className="text-sm font-medium text-muted-foreground">
                         /

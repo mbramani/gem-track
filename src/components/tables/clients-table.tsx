@@ -97,7 +97,7 @@ const generateClientColumns = (
                         size="sm"
                         onClick={() => onView(client)}
                     >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="size-4" />
                         <span className="sr-only">View {client.name}</span>
                     </Button>
                     <Button
@@ -105,7 +105,7 @@ const generateClientColumns = (
                         size="sm"
                         onClick={() => onEdit(client)}
                     >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="size-4" />
                         <span className="sr-only">Edit {client.name}</span>
                     </Button>
                     <DeleteClientDialog client={client} onDelete={onDelete} />
@@ -127,7 +127,7 @@ function DeleteClientDialog({ client, onDelete }: DeleteClientDialogProps) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="size-4" />
                     <span className="sr-only">Delete {client.name}</span>
                 </Button>
             </DialogTrigger>

@@ -113,10 +113,10 @@ export function AppSidebar() {
                                     variant="ghost"
                                     className="w-full justify-start"
                                 >
-                                    <item.icon className="h-4 w-4" />
+                                    <item.icon className="size-4" />
                                     <span>{item.name}</span>
                                     {activePage === item.name && (
-                                        <ChevronRight className="ml-auto h-4 w-4" />
+                                        <ChevronRight className="ml-auto size-4" />
                                     )}
                                 </Button>
                             </SidebarMenuButton>
@@ -146,11 +146,11 @@ function ThemeToggle() {
             <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
                     {theme === 'light' ? (
-                        <Sun className="h-4 w-4" />
+                        <Sun className="size-4" />
                     ) : theme === 'dark' ? (
-                        <Moon className="h-4 w-4" />
+                        <Moon className="size-4" />
                     ) : (
-                        <Sun className="h-4 w-4" />
+                        <Sun className="size-4" />
                     )}
                     <span className="ml-1">Theme</span>
                     <span className="sr-only">Toggle theme</span>
@@ -188,7 +188,7 @@ function UserMenu({ user }: { user: { name: string; email: string } }) {
                             {user.email}
                         </span>
                     </div>
-                    <ChevronsUpDown className="ml-auto h-4 w-4" />
+                    <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
@@ -197,14 +197,14 @@ function UserMenu({ user }: { user: { name: string; email: string } }) {
                     onClick={() => router.push('/dashboard/profile')}
                     className="cursor-pointer"
                 >
-                    <User className="mr-2 h-4 w-4" />
+                    <User className="mr-2 size-4" />
                     <span>Profile</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => router.push('/dashboard/settings')}
                     className="cursor-pointer"
                 >
-                    <Settings className="mr-2 h-4 w-4" />
+                    <Settings className="mr-2 size-4" />
                     <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -212,7 +212,7 @@ function UserMenu({ user }: { user: { name: string; email: string } }) {
                     onClick={() => router.push('/login')}
                     className="cursor-pointer"
                 >
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-2 size-4" />
                     <span>Log out</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>

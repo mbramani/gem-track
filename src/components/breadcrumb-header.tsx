@@ -53,7 +53,7 @@ function BreadcrumbItem({
     return (
         <Fragment key={path}>
             <li className="text-sm font-medium text-muted-foreground">
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="size-4" />
             </li>
             <li>
                 {isLast ? (

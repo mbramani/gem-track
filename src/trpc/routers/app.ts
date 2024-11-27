@@ -4,15 +4,17 @@ import { clientRouter } from './client';
 import { createTRPCRouter } from '../init';
 import { diamondPacketRouter } from './diamond-packet';
 import { employeeRouter } from './employee';
+import { processRouter } from './process';
 import { userRouter } from './user';
 
 export const appRouter = createTRPCRouter({
-    auth: authRouter,
-    user: userRouter,
-    client: clientRouter,
-    employee: employeeRouter,
     address: addressRouter,
+    auth: authRouter,
+    client: clientRouter,
     diamondPacket: diamondPacketRouter,
+    employee: employeeRouter,
+    process: processRouter,
+    user: userRouter,
 });
 
 export type AppRouter = typeof appRouter;

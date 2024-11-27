@@ -91,6 +91,7 @@ async function seed() {
         await prisma.address.deleteMany();
         await prisma.user.deleteMany();
         await prisma.diamondPacket.deleteMany();
+        await prisma.process.deleteMany();
 
         // Create test user with address
         const userAddress = await prisma.address.create({
@@ -198,6 +199,22 @@ async function seed() {
             })
         );
 
+        // Create 5 test process
+        const processes = await Promise.all(
+            Array.from({ length: 5 }, async (_, i) => {
+                return await prisma.process.create({
+                    data: {
+                        processId: `P${String(i + 1).padStart(4, '0')}`,
+                        name: `Process ${i + 1}`,
+                        description: `Description for Process ${i + 1}`,
+                        price: Number((Math.random() * 1000 + 100).toFixed(4)),
+                        cost: Number((Math.random() * 500 + 50).toFixed(4)),
+                        userId: user.id,
+                    },
+                });
+            })
+        );
+
         console.log(`🌟 Seeding completed successfully!`);
         console.log(`👤 User: ${user.email}`);
         console.log(`🔑 Password: Test@1234`);
@@ -206,6 +223,7 @@ async function seed() {
         console.log(
             `💎 Number of diamond packets created: ${diamondPackets.length}`
         );
+        console.log(`⚙️ Number of processes created: ${processes.length}`);
     } catch (error) {
         console.error('Error seeding database:', error);
         process.exit(1);

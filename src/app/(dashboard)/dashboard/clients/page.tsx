@@ -14,7 +14,7 @@ export default function ClientsPage() {
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl md:text-3xl font-bold">Clients</h1>
                 <Button onClick={() => router.push('clients/create')}>
-                    <Plus className="h-4 w-4" /> Add New Client
+                    <Plus className="size-4" /> Add New Client
                 </Button>
             </div>
             <Suspense fallback={<TableSkeleton columns={7} rows={10} />}>

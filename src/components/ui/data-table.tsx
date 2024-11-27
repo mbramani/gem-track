@@ -457,11 +457,11 @@ export function DataTableSortableHeader<TData>({
                         {title}
                         <div className="flex items-center">
                             {column.getIsSorted() === 'asc' ? (
-                                <ArrowUp className="ml-1 h-4 w-4" />
+                                <ArrowUp className="ml-1 size-4" />
                             ) : column.getIsSorted() === 'desc' ? (
-                                <ArrowDown className="ml-1 h-4 w-4" />
+                                <ArrowDown className="ml-1 size-4" />
                             ) : (
-                                <ArrowUpDown className="ml-1 h-4 w-4" />
+                                <ArrowUpDown className="ml-1 size-4" />
                             )}
                             {column.getSortIndex() >= 0 && (
                                 <span className="text-xs bg-primary-foreground p-0.5 rounded-full w-5 h-5 ml-1">

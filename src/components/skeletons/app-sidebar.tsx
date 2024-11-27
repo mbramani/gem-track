@@ -36,7 +36,7 @@ export function AppSidebarSkeleton() {
                         <SidebarMenuItem key={index} className="px-2">
                             <SidebarMenuButton asChild className="px-2">
                                 <div className="flex w-full items-center">
-                                    <Skeleton className="h-4 w-4 mr-2" />
+                                    <Skeleton className="size-4 mr-2" />
                                     <Skeleton className="h-4 flex-grow" />
                                 </div>
                             </SidebarMenuButton>
@@ -48,7 +48,7 @@ export function AppSidebarSkeleton() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton>
-                            <Skeleton className="h-4 w-4 mr-2" />
+                            <Skeleton className="size-4 mr-2" />
                             <Skeleton className="h-4 w-12" />
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -59,7 +59,7 @@ export function AppSidebarSkeleton() {
                                 <Skeleton className="h-4 w-24" />
                                 <Skeleton className="h-3 w-32" />
                             </div>
-                            <Skeleton className="h-4 w-4 ml-auto" />
+                            <Skeleton className="size-4 ml-auto" />
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

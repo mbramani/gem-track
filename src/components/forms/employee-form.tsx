@@ -310,7 +310,7 @@ export function EmployeeCreateForm() {
                     >
                         {employeeCreateMutation.isPending ? (
                             <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="mr-2 size-4 animate-spin" />
                                 Creating...
                             </>
                         ) : (
@@ -470,7 +470,7 @@ export function EmployeeEditForm({ id }: { id: string }) {
                     >
                         {updateEmployeeMutation.isPending ? (
                             <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="mr-2 size-4 animate-spin" />
                                 Updating...
                             </>
                         ) : (

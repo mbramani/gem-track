@@ -132,7 +132,7 @@ export function ProfileForm() {
                     >
                         {updateProfileMutation.isPending ? (
                             <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="mr-2 size-4 animate-spin" />
                                 Updating...
                             </>
                         ) : (
