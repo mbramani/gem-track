@@ -78,6 +78,17 @@ export function ClientFormSkeleton() {
     );
 }
 
+export function FormSkeleton({ fields = 5 }: { fields?: number }) {
+    return (
+        <div className="space-y-8">
+            <FormFieldSkeleton fields={fields} />
+            <div className="flex justify-between">
+                <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-10 w-32" />
+            </div>
+        </div>
+    );
+}
 export function EmployeeFormSkeleton() {
     return ClientFormSkeleton();
 }
