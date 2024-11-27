@@ -102,7 +102,10 @@ export const employeeSchema = profileSchema
 export const diamondPacketSchema = z.object({
     diamondPacketId: z
         .string()
-        .min(1, { message: 'Diamond Packet ID is required' }),
+        .min(1, { message: 'Diamond Packet ID is required' })
+        .max(255, {
+            message: 'Diamond Packet ID must be 255 or fewer characters long',
+        }),
     batchNo: z.number().multipleOf(0.01, {
         message: 'Batch number must be a multiple of 0.01',
     }),
@@ -128,19 +131,50 @@ export const diamondPacketSchema = z.object({
         .multipleOf(0.0001)
         .positive({ message: 'Booter weight must be positive' }),
     diamondShape: z.nativeEnum(DiamondShape, {
-        message: 'Invalid diamond shape',
+        message: 'Diamond shape is invalid',
     }),
     diamondColor: z.nativeEnum(DiamondColor, {
-        message: 'Invalid diamond color',
+        message: 'Diamond color is invalid',
     }),
     diamondPurity: z.nativeEnum(DiamondPurity, {
-        message: 'Invalid diamond purity',
+        message: 'Diamond purity is invalid',
     }),
     receiveDateTime: z.date({ message: 'Invalid receive date time' }),
     deliveryDateTime: z
         .date({ message: 'Invalid delivery date time' })
         .optional(),
     clientId: z.string().uuid({ message: 'Invalid client ID' }),
+});
+
+export const processSchema = z.object({
+    processId: z
+        .string()
+        .min(1, { message: 'Process ID is required' })
+        .max(255, {
+            message: 'Process ID must be 255 or fewer characters long',
+        }),
+    name: z
+        .string()
+        .min(1, { message: 'Name is required' })
+        .max(255, { message: 'Name must be 255 or fewer characters long' }),
+    description: z
+        .string()
+        .max(1000, {
+            message: 'Description must be 1000 or fewer characters long',
+        })
+        .optional(),
+    price: z
+        .number()
+        .positive({ message: 'Price must be positive' })
+        .multipleOf(0.0001, {
+            message: 'Price must be a multiple of 0.0001',
+        }),
+    cost: z
+        .number()
+        .positive({ message: 'Cost must be positive' })
+        .multipleOf(0.0001, {
+            message: 'Cost must be a multiple of 0.0001',
+        }),
 });
 
 export const paginationSchema = z.object({

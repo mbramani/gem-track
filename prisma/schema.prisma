@@ -87,6 +87,7 @@ model User {
   clients        Client[]
   employees      Employee[]
   diamondPackets DiamondPacket[]
+  processes      Process[]
 }
 
 model Client {
@@ -163,4 +164,18 @@ model DiamondPacket {
   // Relations
   client             Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
   user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Process {
+  id          String   @id @default(uuid())
+  processId   String   @db.VarChar(255)
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  price       Decimal  @db.Decimal(10, 4)
+  cost        Decimal  @db.Decimal(10, 4)
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
