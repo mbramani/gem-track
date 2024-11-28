@@ -6,12 +6,12 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
-import { DiamondPacketEditForm } from '@/components/forms/diamond-packet-form';
+import { AssignedPacketForm } from '@/components/forms/assigned-packet-form';
 import { idSchema } from '@/schemas';
 import { notFound } from 'next/navigation';
 import { trpc } from '@/trpc/server';
 
-export default async function DiamondPacketEditPage({
+export default async function AssignPage({
     params,
 }: {
     params: Promise<{ id: string }>;
@@ -33,19 +33,22 @@ export default async function DiamondPacketEditPage({
     return (
         <section className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
             <h1 className="text-2xl md:text-3xl font-bold mb-8">
-                Edit Diamond Packet
+                Assign Process
             </h1>
-            <Card>
+            <Card className="w-full mx-auto">
                 <CardHeader>
-                    <CardTitle>Diamond Packet Information</CardTitle>
+                    <CardTitle>Assign Process to Diamond Packet</CardTitle>
                     <CardDescription>
-                        Update the diamond packet&apos;s details and address
+                        Assign a new process to the diamond packet
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <DiamondPacketEditForm
+                    <AssignedPacketForm
+                        diamondPacketId={diamondPacket.id}
                         initialValues={JSON.parse(
-                            JSON.stringify(diamondPacket)
+                            JSON.stringify({
+                                beforeWeight: diamondPacket.finalWeight,
+                            })
                         )}
                     />
                 </CardContent>

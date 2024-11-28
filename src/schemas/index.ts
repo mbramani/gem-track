@@ -1,5 +1,11 @@
-import { DiamondColor, DiamondPurity, DiamondShape } from '@prisma/client';
+import {
+    DiamondColor,
+    DiamondPurity,
+    DiamondShape,
+    ProcessStatus,
+} from '@prisma/client';
 
+import { start } from 'repl';
 import { z } from 'zod';
 
 const GST_IN_REGEX = /^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/;
@@ -175,6 +181,32 @@ export const processSchema = z.object({
         .multipleOf(0.0001, {
             message: 'Cost must be a multiple of 0.0001',
         }),
+});
+
+export const diamondPacketProcessSchema = z.object({
+    status: z
+        .nativeEnum(ProcessStatus, { message: 'Process status is invalid' })
+        .default(ProcessStatus.PENDING),
+    startDateTime: z.date({ message: 'Invalid start date time' }),
+    endDateTime: z.date({ message: 'Invalid end date time' }).optional(),
+    beforeWeight: z
+        .number()
+        .multipleOf(0.0001)
+        .positive({ message: 'After weight must be positive' }),
+    afterWeight: z
+        .number()
+        .multipleOf(0.0001)
+        .positive({ message: 'After weight must be positive' })
+        .optional(),
+    remarks: z
+        .string()
+        .max(1000, {
+            message: 'Remarks must be 1000 or fewer characters long',
+        })
+        .optional(),
+    processId: z.string().uuid({ message: 'Invalid process ID' }),
+    diamondPacketId: z.string().uuid({ message: 'Invalid diamond packet ID' }),
+    employeeId: z.string().uuid({ message: 'Invalid employee ID' }),
 });
 
 export const paginationSchema = z.object({
