@@ -62,9 +62,9 @@ export function ClientSearchPopover({
     const clients: Client[] = data?.clients ?? [];
 
     const selectedClient = selectedClientId
-        ? clients.find((client) => client.id === selectedClientId) ??
-          defaultSelectedClient
-        : defaultSelectedClient ?? null;
+        ? (clients.find((client) => client.id === selectedClientId) ??
+          defaultSelectedClient)
+        : (defaultSelectedClient ?? null);
 
     function handleSelect(clientId: string) {
         onClientSelect(clientId);
@@ -141,15 +141,15 @@ export function ProcessSearchPopover({
             filter: [{ id: 'name', value: debouncedSearch }],
         },
         {
-            enabled: debouncedSearch.length > 2,
+            enabled: debouncedSearch.length > 3,
         }
     );
 
     const processes: Process[] = data?.processes ?? [];
 
     const selectedProcess = selectedProcessId
-        ? processes.find((process) => process.id === selectedProcessId) ??
-          defaultSelectedProcess
+        ? (processes.find((process) => process.id === selectedProcessId) ??
+          defaultSelectedProcess)
         : defaultSelectedProcess;
 
     return (
@@ -216,15 +216,15 @@ export function EmployeeSearchPopover({
             filter: [{ id: 'name', value: debouncedSearch }],
         },
         {
-            enabled: debouncedSearch.length > 2,
+            enabled: debouncedSearch.length > 3,
         }
     );
 
     const employees: Employee[] = data?.employees ?? [];
 
     const selectedEmployee = selectedEmployeeId
-        ? employees.find((employee) => employee.id === selectedEmployeeId) ??
-          defaultSelectedEmployee
+        ? (employees.find((employee) => employee.id === selectedEmployeeId) ??
+          defaultSelectedEmployee)
         : defaultSelectedEmployee;
 
     return (

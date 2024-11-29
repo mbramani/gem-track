@@ -93,7 +93,7 @@ export default function ReportForm() {
                 filter: [{ id: 'name', value: debouncedClientSearch }],
             },
             {
-                enabled: clientOpen && debouncedClientSearch.length > 2,
+                enabled: clientOpen && debouncedClientSearch.length > 3,
             }
         );
 
