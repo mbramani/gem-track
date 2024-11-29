@@ -125,17 +125,28 @@ const generateClientColumns = (
     },
     {
         accessorKey: 'size',
-        header: ({ column }) => (
-            <DataTableSortableHeader column={column} title="Size" />
+        header: () => (
+            <Button
+                variant="ghost"
+                className="flex items-center -ml-2 !p-1.5 text-sm"
+            >
+                Size{' '}
+            </Button>
         ),
+        cell: ({ cell }) => Number(cell.getValue()).toFixed(2),
         enableColumnFilter: false,
     },
     {
         accessorKey: 'expectedPercentage',
-        header: ({ column }) => (
-            <DataTableSortableHeader column={column} title="Expected %" />
+        header: () => (
+            <Button
+                variant="ghost"
+                className="flex items-center -ml-2 !p-1.5 text-sm"
+            >
+                Expected %
+            </Button>
         ),
-        cell: ({ cell }) => `${cell.getValue()}%`,
+        cell: ({ cell }) => `${Number(cell.getValue()).toFixed(2)}%`,
         enableColumnFilter: false,
     },
     {

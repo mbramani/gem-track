@@ -1,9 +1,27 @@
 import { PrismaClient } from '@prisma/client';
 
-const globalForPrisma = global as unknown as {
-    prisma: PrismaClient | undefined;
-};
-
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+export const prisma = new PrismaClient().$extends({
+    result: {
+        diamondPacket: {
+            size: {
+                needs: { makeableWeight: true, piece: true },
+                compute(diamondPacket) {
+                    return (
+                        Number(diamondPacket.makeableWeight) /
+                        (diamondPacket?.piece || 1)
+                    );
+                },
+            },
+            expectedPercentage: {
+                needs: { makeableWeight: true, expectedWeight: true },
+                compute(diamondPacket) {
+                    return (
+                        (Number(diamondPacket.expectedWeight) /
+                            Number(diamondPacket.makeableWeight)) *
+                        100
+                    );
+                },
+            },
+        },
+    },
+});

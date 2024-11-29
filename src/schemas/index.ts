@@ -209,6 +209,15 @@ export const diamondPacketProcessSchema = z.object({
     employeeId: z.string().uuid({ message: 'Invalid employee ID' }),
 });
 
+export const reportSchema = z.object({
+    reportId: z.string().min(1, { message: 'Report ID is required' }).max(255, {
+        message: 'Report ID must be 255 or fewer characters long',
+    }),
+    clientId: z.string().uuid({ message: 'Invalid client ID' }),
+    diamondPacketIds: z.array(
+        z.string().uuid({ message: 'Invalid diamond packet ID' })
+    ),
+});
 export const paginationSchema = z.object({
     page: z
         .number()

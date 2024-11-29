@@ -26,9 +26,6 @@ export const diamondPacketRouter = createTRPCRouter({
             const diamondPacket = await ctx.db.diamondPacket.create({
                 data: {
                     ...input,
-                    size: input.makeableWeight / (input?.piece || 1),
-                    expectedPercentage:
-                        (input.makeableWeight / input.expectedWeight) * 100,
                     clientId: input.clientId,
                     userId: ctx.userId,
                 },
@@ -43,7 +40,14 @@ export const diamondPacketRouter = createTRPCRouter({
             // Find diamond packet by id and user id
             const diamondPacket = await ctx.db.diamondPacket.findFirst({
                 where: { id: input.id, userId: ctx.userId },
-                include: { client: true, diamondPacketProcesses: true },
+                include: {
+                    client: true,
+                    diamondPacketProcesses: {
+                        orderBy: {
+                            startDateTime: 'desc',
+                        },
+                    },
+                },
             });
 
             if (!diamondPacket) {
@@ -53,16 +57,14 @@ export const diamondPacketRouter = createTRPCRouter({
                 });
             }
 
-            // Calculate final weight and percentage
-            const lastAppliedProcess =
-                diamondPacket.diamondPacketProcesses
-                    .sort(
-                        (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-                    )
-                    .filter((ap) => ap.status === ProcessStatus.COMPLETED)[0] ??
-                null;
+            // Calculate final weight from last completed process
+            const lastCompletedProcess =
+                diamondPacket.diamondPacketProcesses.find(
+                    (process) => process.status === 'COMPLETED'
+                );
 
-            const finalWeight = lastAppliedProcess?.afterWeight ?? 0;
+            const finalWeight = lastCompletedProcess?.afterWeight || 0;
+
             const finalPercentage =
                 finalWeight && diamondPacket.expectedWeight
                     ? (Number(finalWeight) /

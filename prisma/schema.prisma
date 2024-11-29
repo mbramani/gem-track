@@ -71,6 +71,13 @@ enum DiamondShape {
   Round
 }
 
+enum ProcessStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
 model User {
   id                     String                 @id @default(uuid())
   name                   String                 @db.VarChar(100)
@@ -82,13 +89,14 @@ model User {
   addressId              String                 @unique
   createdAt              DateTime               @default(now())
   updatedAt              DateTime               @updatedAt
-  address                Address                @relation(fields: [addressId], references: [id], onDelete: Cascade)
   // Relations
+  address                Address                @relation(fields: [addressId], references: [id], onDelete: Cascade)
   clients                Client[]
   employees              Employee[]
   diamondPackets         DiamondPacket[]
   processes              Process[]
   diamondPacketProcesses DiamondPacketProcess[]
+  Report                 Report[]
 }
 
 model Client {
@@ -106,6 +114,7 @@ model Client {
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   address        Address         @relation(fields: [addressId], references: [id], onDelete: Cascade)
   diamondPackets DiamondPacket[]
+  reports        Report[]
 }
 
 model Employee {
@@ -155,8 +164,6 @@ model DiamondPacket {
   diamondShape           DiamondShape
   diamondColor           DiamondColor
   diamondPurity          DiamondPurity
-  size                   Decimal                @db.Decimal(10, 4) // makeableWeight / piece
-  expectedPercentage     Decimal                @db.Decimal(10, 4) // (expectedWeight / makeableWeight) * 100
   receiveDateTime        DateTime               @db.Timestamptz
   deliveryDateTime       DateTime?              @db.Timestamptz
   clientId               String
@@ -167,6 +174,7 @@ model DiamondPacket {
   client                 Client                 @relation(fields: [clientId], references: [id], onDelete: Cascade)
   user                   User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   diamondPacketProcesses DiamondPacketProcess[]
+  reportItems            ReportItem[]
 }
 
 model Process {
@@ -205,9 +213,24 @@ model DiamondPacketProcess {
   user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum ProcessStatus {
-  PENDING
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
+model Report {
+  id          String       @id @default(uuid())
+  reportId    String       @db.VarChar(255)
+  clientId    String
+  userId      String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  // Relations
+  client      Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportItems ReportItem[]
+}
+
+model ReportItem {
+  id              String        @id @default(uuid())
+  diamondPacketId String
+  reportId        String
+  // Relations
+  diamondPacket   DiamondPacket @relation(fields: [diamondPacketId], references: [id], onDelete: Cascade)
+  report          Report        @relation(fields: [reportId], references: [id], onDelete: Cascade)
 }

@@ -5,6 +5,7 @@ import {
     DiamondPurity,
     DiamondShape,
     PrismaClient,
+    ProcessStatus,
 } from '@prisma/client';
 
 import { hash } from 'bcryptjs';
@@ -87,11 +88,14 @@ async function seed() {
         console.log(`🚀 Seeding started...`);
 
         // Cleanup
-        await prisma.client.deleteMany();
-        await prisma.address.deleteMany();
-        await prisma.user.deleteMany();
+        await prisma.reportItem.deleteMany();
+        await prisma.report.deleteMany();
+        await prisma.diamondPacketProcess.deleteMany();
         await prisma.diamondPacket.deleteMany();
         await prisma.process.deleteMany();
+        await prisma.employee.deleteMany();
+        await prisma.client.deleteMany();
+        await prisma.user.deleteMany();
 
         // Create test user with address
         const userAddress = await prisma.address.create({
@@ -169,12 +173,6 @@ async function seed() {
                     (expectedWeight * (0.8 + Math.random() * 0.15)).toFixed(4)
                 );
 
-                // Calculate computed values
-                const size = Number((makeableWeight / piece).toFixed(4));
-                const expectedPercentage = Number(
-                    ((expectedWeight / makeableWeight) * 100).toFixed(2)
-                );
-
                 return await prisma.diamondPacket.create({
                     data: {
                         diamondPacketId: `DP${String(i + 1).padStart(4, '0')}`,
@@ -186,8 +184,6 @@ async function seed() {
                         makeableWeight,
                         expectedWeight,
                         booterWeight,
-                        size,
-                        expectedPercentage,
                         diamondShape: getRandomEnumValue(DiamondShape),
                         diamondColor: getRandomEnumValue(DiamondColor),
                         diamondPurity: getRandomEnumValue(DiamondPurity),
@@ -215,6 +211,78 @@ async function seed() {
             })
         );
 
+        // Create 10 test diamond packet processes
+        await Promise.all(
+            Array.from({ length: 10 }, async (_, i) => {
+                const diamondPacket = diamondPackets[i % diamondPackets.length]; // Avoid out-of-bounds access
+                const process =
+                    processes[Math.floor(Math.random() * processes.length)];
+                const employee =
+                    employees[Math.floor(Math.random() * employees.length)];
+
+                return prisma.diamondPacketProcess.create({
+                    data: {
+                        diamondPacketId: diamondPacket.id,
+                        processId: process.id,
+                        employeeId: employee.id,
+                        startDateTime: new Date(),
+                        endDateTime: new Date(),
+                        beforeWeight: diamondPacket.makeableWeight,
+                        afterWeight: diamondPacket.expectedWeight,
+                        status: ProcessStatus.COMPLETED,
+                        userId: user.id,
+                    },
+                });
+            })
+        );
+
+        // Create 5 test reports
+        const reports = await Promise.all(
+            Array.from({ length: 5 }, async (_, i) => {
+                return prisma.report.create({
+                    data: {
+                        reportId: `R${String(i + 1).padStart(4, '0')}`,
+                        clientId: clients[i % clients.length].id, // Avoid out-of-bounds access
+                        userId: user.id,
+                    },
+                });
+            })
+        );
+
+        // Create Report Items for each report
+        await Promise.all(
+            reports.map(async (report) => {
+                const associatedDiamondPackets = diamondPackets.filter(
+                    (dp) => dp.clientId === report.clientId
+                );
+
+                if (associatedDiamondPackets.length === 0) {
+                    console.error(
+                        `No diamond packets found for client ${report.clientId}`
+                    );
+                    return;
+                }
+
+                return Promise.all(
+                    Array.from({ length: 5 }, async () => {
+                        const diamondPacket =
+                            associatedDiamondPackets[
+                                Math.floor(
+                                    Math.random() *
+                                        associatedDiamondPackets.length
+                                )
+                            ];
+
+                        return prisma.reportItem.create({
+                            data: {
+                                reportId: report.id,
+                                diamondPacketId: diamondPacket.id,
+                            },
+                        });
+                    })
+                );
+            })
+        );
         console.log(`🌟 Seeding completed successfully!`);
         console.log(`👤 User: ${user.email}`);
         console.log(`🔑 Password: Test@1234`);

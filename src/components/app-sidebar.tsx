@@ -84,7 +84,7 @@ export function AppSidebar() {
                             size="lg"
                             onClick={() => router.push('/dashboard')}
                         >
-                            <Avatar className="h-8 w-8">
+                            <Avatar className="size-8">
                                 <AvatarFallback>GT</AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -107,7 +107,7 @@ export function AppSidebar() {
                                 onClick={() =>
                                     handleSidebarMenuButtonClick(item)
                                 }
-                                className="px-2"
+                                className="px-2 my-0.5"
                             >
                                 <Button
                                     variant="ghost"
@@ -177,7 +177,7 @@ function UserMenu({ user }: { user: { name: string; email: string } }) {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg">
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="size-8">
                         <AvatarFallback>
                             {user.name.at(0)?.toUpperCase()}
                         </AvatarFallback>
