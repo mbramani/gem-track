@@ -100,14 +100,14 @@ const generateProcessColumns = (
             const process = row.original;
             return (
                 <div className="flex justify-end gap-2">
-                    <Button
+                    {/* <Button
                         variant="outline"
                         size="sm"
                         onClick={() => onView(process)}
                     >
                         <Eye className="size-4" />
                         <span className="sr-only">View {process.name}</span>
-                    </Button>
+                    </Button> */}
                     <Button
                         variant="outline"
                         size="sm"

@@ -92,14 +92,14 @@ const generateClientColumns = (
             const client = row.original;
             return (
                 <div className="flex justify-end gap-2">
-                    <Button
+                    {/* <Button
                         variant="outline"
                         size="sm"
                         onClick={() => onView(client)}
                     >
                         <Eye className="size-4" />
                         <span className="sr-only">View {client.name}</span>
-                    </Button>
+                    </Button> */}
                     <Button
                         variant="outline"
                         size="sm"

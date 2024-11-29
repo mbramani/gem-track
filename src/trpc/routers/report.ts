@@ -76,6 +76,9 @@ export const reportRouter = createTRPCRouter({
                             diamondPacket: {
                                 include: {
                                     diamondPacketProcesses: {
+                                        where: {
+                                            status: 'COMPLETED',
+                                        },
                                         orderBy: {
                                             startDateTime: 'desc',
                                         },
@@ -108,19 +111,18 @@ export const reportRouter = createTRPCRouter({
                         : 0;
 
                 return {
-                    ...item,
-                    stats: {
-                        finalWeight,
-                        finalPercentage,
-                        lastCompletedProcess,
-                    },
+                    ...dp,
+                    reportItemId: item.id,
+                    id: undefined,
+                    finalWeight,
+                    finalPercentage,
                 };
             });
 
             // Calculate totals
             const totals = reportItemsWithStats.reduce(
                 (acc, item) => {
-                    const dp = item.diamondPacket;
+                    const dp = item;
                     return {
                         totalLot: acc.totalLot + (dp.lot || 0),
                         totalPiece: acc.totalPiece + (dp.piece || 0),
@@ -129,8 +131,7 @@ export const reportRouter = createTRPCRouter({
                         totalExpectedWeight:
                             acc.totalExpectedWeight + Number(dp.expectedWeight),
                         totalFinalWeight:
-                            acc.totalFinalWeight +
-                            Number(item.stats.finalWeight),
+                            acc.totalFinalWeight + Number(item.finalWeight),
                     };
                 },
                 {
@@ -143,9 +144,11 @@ export const reportRouter = createTRPCRouter({
             );
 
             return {
-                ...report,
-                reportItems: reportItemsWithStats,
-                statistics: totals,
+                report: {
+                    ...report,
+                    reportItems: reportItemsWithStats,
+                    statistics: totals,
+                },
             };
         }),
 
@@ -188,6 +191,7 @@ export const reportRouter = createTRPCRouter({
             // Find reports
             const reports = await ctx.db.report.findMany({
                 where,
+                include: { client: true },
                 orderBy: orderBy.length > 0 ? orderBy : [{ updatedAt: 'desc' }],
                 skip: (page - 1) * limit,
                 take: limit,
@@ -202,7 +206,7 @@ export const reportRouter = createTRPCRouter({
                 currentPage: page,
             };
         }),
-    
+
     delete: protectedProcedure
         .input(idSchema)
         .mutation(async ({ ctx, input }) => {

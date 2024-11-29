@@ -16,10 +16,10 @@ import {
     DataTableSortableHeader,
     DataTableViewOptions,
 } from '@/components/ui/data-table';
+import { DiamondPacketProcess, Employee } from '@prisma/client';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { DiamondPacketProcess } from '@prisma/client';
 import { Edit } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
@@ -31,15 +31,27 @@ const generateAssignedProcessColumns = (
 ): ColumnDef<DiamondPacketProcess>[] => [
     {
         accessorKey: 'process.name',
-        header: ({ column }) => (
-            <DataTableSortableHeader column={column} title="Process" />
+        header: () => (
+            <Button
+                variant="ghost"
+                className="flex items-center -ml-2 !p-1.5 text-sm"
+            >
+                Process
+            </Button>
         ),
+        enableColumnFilter: false,
     },
     {
-        accessorKey: 'employee.name',
-        header: ({ column }) => (
-            <DataTableSortableHeader column={column} title="Employee" />
+        accessorKey: 'employee.employeeId',
+        header: () => (
+            <Button
+                variant="ghost"
+                className="flex items-center -ml-2 !p-1.5 text-sm"
+            >
+                Employee Id
+            </Button>
         ),
+        enableColumnFilter: false,
     },
     {
         accessorKey: 'status',

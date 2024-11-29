@@ -5,6 +5,7 @@ import { createTRPCRouter } from '../init';
 import { diamondPacketRouter } from './diamond-packet';
 import { employeeRouter } from './employee';
 import { processRouter } from './process';
+import { reportRouter } from './report';
 import { userRouter } from './user';
 
 export const appRouter = createTRPCRouter({
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
     diamondPacket: diamondPacketRouter,
     employee: employeeRouter,
     process: processRouter,
+    report: reportRouter,
     user: userRouter,
 });
 

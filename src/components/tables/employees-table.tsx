@@ -132,10 +132,10 @@ function DeleteEmployeeDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
+                {/* <Button variant="outline" size="sm">
                     <Trash2 className="size-4" />
                     <span className="sr-only">Delete {employee.name}</span>
-                </Button>
+                </Button> */}
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
